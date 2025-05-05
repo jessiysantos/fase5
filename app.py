@@ -1,11 +1,18 @@
 import json
 import streamlit as st
+import requests
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
-# Carrega o arquivo JSON
-with open('C:\\Users\\jessi\\OneDrive\\Desktop\\Datathon\\applicants.json', 'r', encoding='utf-8') as file:
-    data = json.load(file)
+# Carrega o JSON do Google Drive
+@st.cache_data
+def load_data_from_drive():
+    url = "https://drive.google.com/uc?id=1CHv4tvbiLRUbqLZGGMAQdLhelUy-tQI3"
+    response = requests.get(url)
+    response.raise_for_status()
+    return json.loads(response.content.decode('utf-8'))
+
+data = load_data_from_drive()
 
 # Função para extrair os dados relevantes de cada candidato
 def extract_candidate_info(candidate_data):
