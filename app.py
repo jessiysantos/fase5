@@ -1,18 +1,20 @@
 import json
 import streamlit as st
-import requests
+import gdown
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
-# Carrega o JSON do Google Drive
+# Função para baixar e carregar o JSON do Google Drive
 @st.cache_data
 def load_data_from_drive():
     url = "https://drive.google.com/uc?id=1CHv4tvbiLRUbqLZGGMAQdLhelUy-tQI3"
-    response = requests.get(url)
-    response.raise_for_status()
-    return json.loads(response.content.decode('utf-8'))
+    output = "applicants.json"
+    gdown.download(url, output, quiet=False)
+    with open(output, 'r', encoding='utf-8') as f:
+        return json.load(f)
 
 data = load_data_from_drive()
+
 
 # Função para extrair os dados relevantes de cada candidato
 def extract_candidate_info(candidate_data):
