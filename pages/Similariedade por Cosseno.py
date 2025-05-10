@@ -9,7 +9,7 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 from nltk.corpus import stopwords
 
-# Carregar os dados do Google Drive
+# Função para carregar os dados do Google Drive
 def carregar_dados_do_drive():
     url_applicants = "https://drive.google.com/uc?id=1CHv4tvbiLRUbqLZGGMAQdLhelUy-tQI3"
     url_vagas = "https://drive.google.com/uc?id=1b9uU-izFPVxdBePzWLbY50jq_XDwLsgl"
@@ -18,22 +18,30 @@ def carregar_dados_do_drive():
     output_vagas = "vagas.json"
     output_applicants = "applicants.json"
     
-    # Baixar os arquivos
-    gdown.download(url_prospects, output_prospects, quiet=False)
-    gdown.download(url_vagas, output_vagas, quiet=False)
-    gdown.download(url_applicants, output_applicants, quiet=False)
-
+    # Baixar os arquivos com uma verificação de progresso
+    with st.spinner('Baixando dados...'):
+        gdown.download(url_prospects, output_prospects, quiet=False)
+        gdown.download(url_vagas, output_vagas, quiet=False)
+        gdown.download(url_applicants, output_applicants, quiet=False)
+    
     # Carregar os arquivos JSON
-    with open(output_prospects, "r", encoding="utf-8") as f:
-        prospects = json.load(f)
-    with open(output_vagas, "r", encoding="utf-8") as f:
-        vagas = json.load(f)
-    with open(output_applicants, "r", encoding="utf-8") as f:
-        applicants = json.load(f)
+    try:
+        with open(output_prospects, "r", encoding="utf-8") as f:
+            prospects = json.load(f)
+        with open(output_vagas, "r", encoding="utf-8") as f:
+            vagas = json.load(f)
+        with open(output_applicants, "r", encoding="utf-8") as f:
+            applicants = json.load(f)
+    except Exception as e:
+        st.error(f"Erro ao carregar os dados: {e}")
+        return None, None, None
     
     return prospects, vagas, applicants
 
 prospects, vagas, applicants = carregar_dados_do_drive()
+
+if prospects is None or vagas is None or applicants is None:
+    st.stop()  # Interrompe a execução se houver erro no carregamento dos dados
 
 # Função para calcular idade
 def calcular_idade(data_nascimento):
