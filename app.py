@@ -75,7 +75,6 @@ if st.button("Encontrar Candidatos"):
     top_matches = find_top_10_matches(vaga_description, data)
 
     if top_matches:
-        st.subheader("Top Candidatos com Similaridade > 0.70:")
         for i, match in enumerate(top_matches, 1):
             st.markdown(f"### {i}. {match['nome']}")
             st.write(f"**Email:** {match['email']}")
