@@ -1,6 +1,6 @@
 import streamlit as st
 
-st.set_page_config(page_title="Seu Título", page_icon=":guardsman:", layout="wide")
+st.set_page_config(page_title="Página inicial", page_icon=":guardsman:", layout="wide")
 
 
 st.title("🎯 Sistema de Recomendação de Candidatos")
