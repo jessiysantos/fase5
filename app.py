@@ -15,85 +15,76 @@ def load_data_from_drive():
 
 data = load_data_from_drive()
 
-
 # Função para extrair os dados relevantes de cada candidato
 def extract_candidate_info(candidate_data):
     try:
-        titulo_profissional = candidate_data['informacoes_profissionais']['titulo_profissional']
-        area_atuacao = candidate_data['informacoes_profissionais']['area_atuacao']
-        conhecimentos_tecnicos = candidate_data['informacoes_profissionais']['conhecimentos_tecnicos']
-        nome = candidate_data['infos_basicas']['nome']
-        email = candidate_data['infos_basicas']['email']
         return {
-            'nome': nome,
-            'email': email,
-            'titulo_profissional': titulo_profissional,
-            'area_atuacao': area_atuacao,
-            'conhecimentos_tecnicos': conhecimentos_tecnicos
+            'nome': candidate_data['infos_basicas']['nome'],
+            'email': candidate_data['infos_basicas']['email'],
+            'titulo_profissional': candidate_data['informacoes_profissionais']['titulo_profissional'],
+            'area_atuacao': candidate_data['informacoes_profissionais']['area_atuacao'],
+            'conhecimentos_tecnicos': candidate_data['informacoes_profissionais']['conhecimentos_tecnicos']
         }
     except KeyError:
         return None
 
-# Função para encontrar os candidatos com maior similaridade
-def find_best_matches(vaga_description, data):
+# Função para encontrar os 10 candidatos mais similares
+def find_top_10_matches(vaga_description, data):
     candidates_info = []
     descriptions = []
-    
-    # Extraímos os dados dos candidatos
-    for key, candidate_data in data.items():
-        candidate_info = extract_candidate_info(candidate_data)
-        if candidate_info:
-            # Concatenamos os dados relevantes para formar uma descrição
-            description = f"{candidate_info['titulo_profissional']} {candidate_info['area_atuacao']} {candidate_info['conhecimentos_tecnicos']}"
-            candidates_info.append(candidate_info)
+
+    # Extrai e monta as descrições dos candidatos
+    for candidate_data in data.values():
+        info = extract_candidate_info(candidate_data)
+        if info:
+            description = f"{info['titulo_profissional']} {info['area_atuacao']} {info['conhecimentos_tecnicos']}"
             descriptions.append(description)
-    
-    # Adiciona a descrição da vaga à lista de descrições
+            candidates_info.append(info)
+
+    # Adiciona a descrição da vaga
     descriptions.append(vaga_description)
-    
-    # Aplica o TF-IDF para transformar as descrições em vetores numéricos
+
+    # Vetorização com TF-IDF
     vectorizer = TfidfVectorizer(stop_words='english')
     tfidf_matrix = vectorizer.fit_transform(descriptions)
-    
-    # Calcula a similaridade de cosseno entre a descrição da vaga e as descrições dos candidatos
-    cosine_similarities = cosine_similarity(tfidf_matrix[-1], tfidf_matrix[:-1])
-    
-    # Classifica os candidatos com base na similaridade
-    similar_candidates = sorted(zip(cosine_similarities[0], candidates_info), reverse=True, key=lambda x: x[0])
-    
-    # Retorna os melhores matches com similaridade maior que 70%
-    matches = []
-    for similarity, candidate in similar_candidates:
-        if similarity > 0.70:  # Similaridade maior que 50%
-            matches.append({
-                'nome': candidate['nome'],
-                'email': candidate['email'],
-                'titulo_profissional': candidate['titulo_profissional'],
-                'area_atuacao': candidate['area_atuacao'],
-                'conhecimentos_tecnicos': candidate['conhecimentos_tecnicos'],
-                'similaridade': f"{similarity:.2f}"
-            })
-    
-    return matches
+
+    # Calcula similaridade
+    cosine_sim = cosine_similarity(tfidf_matrix[-1], tfidf_matrix[:-1])[0]
+
+    # Combina com os dados dos candidatos
+    scored_candidates = sorted(zip(cosine_sim, candidates_info), reverse=True, key=lambda x: x[0])
+
+    # Retorna os top 10
+    top_matches = []
+    for similarity, candidate in scored_candidates[:10]:
+        top_matches.append({
+            'nome': candidate['nome'],
+            'email': candidate['email'],
+            'titulo_profissional': candidate['titulo_profissional'],
+            'area_atuacao': candidate['area_atuacao'],
+            'conhecimentos_tecnicos': candidate['conhecimentos_tecnicos'],
+            'similaridade': f"{similarity:.2f}"
+        })
+
+    return top_matches
 
 # Interface Streamlit
 st.title("Sistema de Sugestão de Candidatos")
 
-# Campo de entrada para a descrição da vaga
-vaga_description = st.text_area("Digite a descrição da vaga", "Implantação e manutenção de software")
+vaga_description = st.text_area("Digite a descrição da vaga:", "Implantação e manutenção de software")
 
-# Botão para encontrar os melhores matches
-if st.button('Encontrar Candidatos'):
-    matches = find_best_matches(vaga_description, data)
-    
-    if matches:
-        for match in matches:
-            st.subheader(f"Nome: {match['nome']}")
-            st.write(f"Email: {match['email']}")
-            st.write(f"Título Profissional: {match['titulo_profissional']}")
-            st.write(f"Área de Atuação: {match['area_atuacao']}")
-            st.write(f"Conhecimentos Técnicos: {match['conhecimentos_tecnicos']}")
-            st.write(f"Similaridade: {match['similaridade']}")
-            st.write("---")
+if st.button("Encontrar Candidatos"):
+    top_matches = find_top_10_matches(vaga_description, data)
+
+    if top_matches:
+        st.subheader("Top 10 Candidatos Mais Compatíveis:")
+        for i, match in enumerate(top_matches, 1):
+            st.markdown(f"### {i}. {match['nome']}")
+            st.write(f"**Email:** {match['email']}")
+            st.write(f"**Título Profissional:** {match['titulo_profissional']}")
+            st.write(f"**Área de Atuação:** {match['area_atuacao']}")
+            st.write(f"**Conhecimentos Técnicos:** {match['conhecimentos_tecnicos']}")
+            st.write(f"**Similaridade:** {match['similaridade']}")
+            st.markdown("---")
     else:
-        st.write("Nenhum candidato com similaridade maior que 50% encontrado.")
+        st.write("Nenhum candidato encontrado.")
