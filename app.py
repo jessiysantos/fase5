@@ -27,5 +27,6 @@ elif aba == 'Similaridade por NPL':
     st.subheader('Módulo: Similaridade por NPL')
     st.write("Aqui vai o conteúdo do aplicativo Streamlit.")
     # Importando o módulo 'streamlit_app' da pasta 'pages'
-    import streamlit_app
-    streamlit_app.run()  # Supondo que a função 'run()' exista no script
+   # import streamlit_app
+   # streamlit_app.run()  # Supondo que a função 'run()' exista no script
+exec(open("pages/streamlit_app.py").read())
