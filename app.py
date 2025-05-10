@@ -20,7 +20,7 @@ st.markdown("Seja bem-vindo(a), selecione a opção desejada.")
 def carregar_dados_drive(url, file_type='json'):
     # Realizar o download do arquivo do Google Drive
     file_id = url.split('id=')[-1]
-    download_url = f"https://drive.google.com/uc?id={file_id}&export=download"
+    download_url = f"https://drive.google.com/uc?export=download&id={file_id}"  # URL de download direto
     response = requests.get(download_url)
 
     # Verificar o status da resposta
@@ -44,9 +44,9 @@ def carregar_dados_drive(url, file_type='json'):
         return None
 
 # URLs dos arquivos no Google Drive
-url_vagas = "https://drive.google.com/uc?id=1U_H3lw1PUwitQxPhL_3HaOqll9KNabG9"
-url_prospects = "https://drive.google.com/uc?id=1PV1VfdOUEUITazlZMfvZkvbzO6NS63xD"
-url_applicants = "https://drive.google.com/uc?id=1CHv4tvbiLRUbqLZGGMAQdLhelUy-tQI3"
+url_vagas = "https://drive.google.com/uc?export=download&id=1U_H3lw1PUwitQxPhL_3HaOqll9KNabG9"
+url_prospects = "https://drive.google.com/uc?export=download&id=1PV1VfdOUEUITazlZMfvZkvbzO6NS63xD"
+url_applicants = "https://drive.google.com/uc?export=download&id=1CHv4tvbiLRUbqLZGGMAQdLhelUy-tQI3"
 
 # Função para carregar as bases de dados com cache
 @st.cache_data
