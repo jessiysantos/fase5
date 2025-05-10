@@ -4,16 +4,14 @@ from datetime import datetime
 
 # Carregar os dados
 @st.cache_data
-def carregar_dados():
-    with open("prospects.json", "r", encoding="utf-8") as f:
-        prospects = json.load(f)
-    with open("vagas.json", "r", encoding="utf-8") as f:
-        vagas = json.load(f)
-    with open("applicants.json", "r", encoding="utf-8") as f:
-        applicants = json.load(f)
-    return prospects, vagas, applicants
+def load_data_from_drive():
+    url = "https://drive.google.com/uc?id=1CHv4tvbiLRUbqLZGGMAQdLhelUy-tQI3"
+    output = "applicants.json"
+    gdown.download(url, output, quiet=False)
+    with open(output, 'r', encoding='utf-8') as f:
+        return json.load(f)
 
-prospects, vagas, applicants = carregar_dados()
+data = load_data_from_drive()
 # Extraindo as informações para novas colunas
 ap = applicants.T
 ap['nome'] = ap['informacoes_pessoais'].apply(lambda x: x.get('nome', ''))
