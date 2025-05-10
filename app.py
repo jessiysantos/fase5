@@ -64,7 +64,7 @@ def find_best_matches(vaga_description, data):
     # Retorna os melhores matches com similaridade maior que 70%
     matches = []
     for similarity, candidate in similar_candidates:
-        if similarity > 0.50:  # Similaridade maior que 50%
+        if similarity > 0.70:  # Similaridade maior que 50%
             matches.append({
                 'nome': candidate['nome'],
                 'email': candidate['email'],
