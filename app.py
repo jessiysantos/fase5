@@ -1,4 +1,3 @@
-
 import streamlit as st
 import sys
 import os
@@ -15,9 +14,7 @@ st.set_page_config(page_title="Página inicial", page_icon=":guardsman:", layout
 
 # Título
 st.title("🎯 Sistema de Recomendação de Candidatos")
-st.markdown("Seja bem-vindo(a) selecione a opção desejada.")
-
-
+st.markdown("Seja bem-vindo(a), selecione a opção desejada.")
 
 # Função para carregar arquivos do Google Drive
 def carregar_dados_drive(url):
