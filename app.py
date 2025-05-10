@@ -13,18 +13,18 @@ st.title("🎯 Sistema de Recomendação de Candidatos")
 st.markdown("Selecione uma aba no menu lateral para começar.")
 
 # Adicionando as abas (usando selectbox ou radio)
-aba = st.selectbox('Escolha o módulo:', ['Por Similaridade Coseno', 'Aplicativo Streamlit'])
+aba = st.selectbox('Escolha o módulo:', ['Similaridade por cosseno', 'Similaridade por NPL'])
 
 # Exibindo o conteúdo baseado na aba selecionada
-if aba == 'Por Similaridade Coseno':
-    st.subheader('Módulo: Similaridade Coseno')
+if aba == 'Similaridade por cosseno':
+    st.subheader('Módulo: Similaridade por Cosseno')
     st.write("Aqui vai o conteúdo do módulo de similaridade cosseno.")
     # Você pode importar e chamar funções ou rodar o script relacionado aqui.
     # Exemplo:
-    # import por_similaridade_cosseno
-    # por_similaridade_cosseno.run()
-elif aba == 'Aplicativo Streamlit':
-    st.subheader('Módulo: Streamlit App')
+    import por_similaridade_cosseno
+    por_similaridade_cosseno.run()
+elif aba == 'Similaridade por NPL':
+    st.subheader('Módulo: Similaridade por NPL')
     st.write("Aqui vai o conteúdo do aplicativo Streamlit.")
     # Importando o módulo 'streamlit_app' da pasta 'pages'
     import streamlit_app
