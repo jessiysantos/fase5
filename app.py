@@ -43,9 +43,9 @@ def carregar_dados_drive(url):
         return None
 
 # URLs dos arquivos no Google Drive
+url_vagas = "https://drive.google.com/uc?id=1U_H3lw1PUwitQxPhL_3HaOqll9KNabG9"
+url_prospects = "https://drive.google.com/uc?id=1PV1VfdOUEUITazlZMfvZkvbzO6NS63xD"
 url_applicants = "https://drive.google.com/uc?id=1CHv4tvbiLRUbqLZGGMAQdLhelUy-tQI3"
-url_vagas = "https://drive.google.com/uc?id=1b9uU-izFPVxdBePzWLbY50jq_XDwLsgl"
-url_prospects = "https://drive.google.com/uc?id=1RxZ7raYToWNPoqOlmqs7p5R_NnaMv0xB"
 
 # Função para carregar as bases de dados com cache
 @st.cache_data
