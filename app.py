@@ -30,11 +30,8 @@ def carregar_dados_drive(url, file_type='json'):
             st.write("Conteúdo do arquivo completo (primeiros 1000 caracteres):")
             st.write(response.text[:1000])  # Exibe até 1000 caracteres para depuração
 
-            # Se for um arquivo CSV
-            if file_type == 'csv':
-                return pd.read_csv(io.StringIO(response.text))
             # Se for um arquivo JSON
-            elif file_type == 'json':
+            if file_type == 'json':
                 return pd.read_json(io.StringIO(response.text))
             else:
                 st.error("Formato de arquivo não suportado.")
@@ -54,9 +51,9 @@ url_applicants = "https://drive.google.com/uc?id=1CHv4tvbiLRUbqLZGGMAQdLhelUy-tQ
 # Função para carregar as bases de dados com cache
 @st.cache_data
 def carregar_dados():
-    applicants = carregar_dados_drive(url_applicants, file_type='csv')  # Alterar para CSV se necessário
-    vagas = carregar_dados_drive(url_vagas, file_type='csv')  # Alterar para CSV se necessário
-    prospects = carregar_dados_drive(url_prospects, file_type='csv')  # Alterar para CSV se necessário
+    applicants = carregar_dados_drive(url_applicants, file_type='json')  # A função agora lida como JSON
+    vagas = carregar_dados_drive(url_vagas, file_type='json')  # Alterar para JSON se necessário
+    prospects = carregar_dados_drive(url_prospects, file_type='json')  # Alterar para JSON se necessário
     
     # Verificação para garantir que as bases foram carregadas corretamente
     if applicants is None or vagas is None or prospects is None:
