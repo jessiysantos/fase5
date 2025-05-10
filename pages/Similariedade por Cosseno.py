@@ -53,7 +53,7 @@ def calcular_idade(data_nascimento):
         return 0
 
 # Extração de informações pessoais
-ap = pd.DataFrame(applicants)
+ap = pd.DataFrame(applicants).T
 ap['nome'] = ap['informacoes_pessoais'].apply(lambda x: x.get('nome', ''))
 ap['idade'] = ap['informacoes_pessoais'].apply(lambda x: calcular_idade(x.get('data_nascimento', '0000-00-00')))
 ap['sexo'] = ap['informacoes_pessoais'].apply(lambda x: x.get('sexo', ''))
