@@ -1,21 +1,7 @@
 import streamlit as st
-import sys
-import os
-import pandas as pd
-import json
 import requests
 import io
-
-# Adicionando o diretório 'pages' ao caminho de busca de módulos
-current_dir = os.path.dirname(os.path.abspath(__file__))
-sys.path.append(os.path.join(current_dir, 'pages'))
-
-# Configuração da página
-st.set_page_config(page_title="Página inicial", page_icon=":guardsman:", layout="wide")
-
-# Título
-st.title("🎯 Sistema de Recomendação de Candidatos")
-st.markdown("Selecione uma aba no menu lateral para começar.")
+import pandas as pd
 
 # Função para carregar arquivos do Google Drive
 def carregar_dados_drive(url):
@@ -23,16 +9,21 @@ def carregar_dados_drive(url):
     file_id = url.split('id=')[-1]
     download_url = f"https://drive.google.com/uc?id={file_id}&export=download"
     response = requests.get(download_url)
-    
+
+    # Verificar o status da resposta
     if response.status_code == 200:
         try:
+            # Depuração: Exibir o conteúdo da resposta para verificar o que está sendo retornado
+            st.write("Conteúdo do arquivo (primeiros 500 caracteres):")
+            st.write(response.text[:500])  # Exibe apenas os primeiros 500 caracteres para depuração
+
             # Tenta carregar como JSON e normalizar
             return pd.read_json(io.StringIO(response.text))
         except ValueError as e:
             st.error(f"Erro ao processar o arquivo JSON: {str(e)}")
             return None
     else:
-        st.error("Erro ao carregar o arquivo.")
+        st.error(f"Erro ao carregar o arquivo. Status: {response.status_code}")
         return None
 
 # URLs dos arquivos no Google Drive
@@ -60,4 +51,3 @@ if applicants is not None and vagas is not None and prospects is not None:
     st.success("Bases de dados carregadas com sucesso!")
 else:
     st.error("Houve um erro ao carregar as bases de dados.")
-
