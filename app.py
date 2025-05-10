@@ -28,12 +28,11 @@ def extract_candidate_info(candidate_data):
     except KeyError:
         return None
 
-# Função para encontrar os 10 candidatos mais similares
+# Função para encontrar os top 10 candidatos com similaridade > 0.70
 def find_top_10_matches(vaga_description, data):
     candidates_info = []
     descriptions = []
 
-    # Extrai e monta as descrições dos candidatos
     for candidate_data in data.values():
         info = extract_candidate_info(candidate_data)
         if info:
@@ -41,30 +40,29 @@ def find_top_10_matches(vaga_description, data):
             descriptions.append(description)
             candidates_info.append(info)
 
-    # Adiciona a descrição da vaga
     descriptions.append(vaga_description)
 
-    # Vetorização com TF-IDF
     vectorizer = TfidfVectorizer(stop_words='english')
     tfidf_matrix = vectorizer.fit_transform(descriptions)
 
-    # Calcula similaridade
     cosine_sim = cosine_similarity(tfidf_matrix[-1], tfidf_matrix[:-1])[0]
 
-    # Combina com os dados dos candidatos
     scored_candidates = sorted(zip(cosine_sim, candidates_info), reverse=True, key=lambda x: x[0])
 
-    # Retorna os top 10
+    # Aplica o filtro de similaridade > 0.70 e limita a 10 candidatos
     top_matches = []
-    for similarity, candidate in scored_candidates[:10]:
-        top_matches.append({
-            'nome': candidate['nome'],
-            'email': candidate['email'],
-            'titulo_profissional': candidate['titulo_profissional'],
-            'area_atuacao': candidate['area_atuacao'],
-            'conhecimentos_tecnicos': candidate['conhecimentos_tecnicos'],
-            'similaridade': f"{similarity:.2f}"
-        })
+    for similarity, candidate in scored_candidates:
+        if similarity > 0.70:
+            top_matches.append({
+                'nome': candidate['nome'],
+                'email': candidate['email'],
+                'titulo_profissional': candidate['titulo_profissional'],
+                'area_atuacao': candidate['area_atuacao'],
+                'conhecimentos_tecnicos': candidate['conhecimentos_tecnicos'],
+                'similaridade': f"{similarity:.2f}"
+            })
+        if len(top_matches) == 10:
+            break
 
     return top_matches
 
@@ -77,7 +75,7 @@ if st.button("Encontrar Candidatos"):
     top_matches = find_top_10_matches(vaga_description, data)
 
     if top_matches:
-        st.subheader("Top 10 Candidatos Mais Compatíveis:")
+        st.subheader("Top Candidatos com Similaridade > 0.70:")
         for i, match in enumerate(top_matches, 1):
             st.markdown(f"### {i}. {match['nome']}")
             st.write(f"**Email:** {match['email']}")
@@ -87,4 +85,4 @@ if st.button("Encontrar Candidatos"):
             st.write(f"**Similaridade:** {match['similaridade']}")
             st.markdown("---")
     else:
-        st.write("Nenhum candidato encontrado.")
+        st.warning("Nenhum candidato com similaridade maior que 0.70 encontrado.")
