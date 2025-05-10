@@ -17,7 +17,7 @@ st.title("🎯 Sistema de Recomendação de Candidatos")
 st.markdown("Seja bem-vindo(a), selecione a opção desejada.")
 
 # Função para carregar arquivos do Google Drive
-def carregar_dados_drive(url):
+def carregar_dados_drive(url, file_type='json'):
     # Realizar o download do arquivo do Google Drive
     file_id = url.split('id=')[-1]
     download_url = f"https://drive.google.com/uc?id={file_id}&export=download"
@@ -30,10 +30,17 @@ def carregar_dados_drive(url):
             st.write("Conteúdo do arquivo completo (primeiros 1000 caracteres):")
             st.write(response.text[:1000])  # Exibe até 1000 caracteres para depuração
 
-            # Tenta carregar como JSON
-            return pd.read_json(io.StringIO(response.text))
+            # Se for um arquivo CSV
+            if file_type == 'csv':
+                return pd.read_csv(io.StringIO(response.text))
+            # Se for um arquivo JSON
+            elif file_type == 'json':
+                return pd.read_json(io.StringIO(response.text))
+            else:
+                st.error("Formato de arquivo não suportado.")
+                return None
         except ValueError as e:
-            st.error(f"Erro ao processar o arquivo JSON: {str(e)}")
+            st.error(f"Erro ao processar o arquivo {file_type.upper()}: {str(e)}")
             return None
     else:
         st.error(f"Erro ao carregar o arquivo. Status: {response.status_code}")
@@ -47,9 +54,9 @@ url_applicants = "https://drive.google.com/uc?id=1CHv4tvbiLRUbqLZGGMAQdLhelUy-tQ
 # Função para carregar as bases de dados com cache
 @st.cache_data
 def carregar_dados():
-    applicants = carregar_dados_drive(url_applicants)
-    vagas = carregar_dados_drive(url_vagas)
-    prospects = carregar_dados_drive(url_prospects)
+    applicants = carregar_dados_drive(url_applicants, file_type='csv')  # Alterar para CSV se necessário
+    vagas = carregar_dados_drive(url_vagas, file_type='csv')  # Alterar para CSV se necessário
+    prospects = carregar_dados_drive(url_prospects, file_type='csv')  # Alterar para CSV se necessário
     
     # Verificação para garantir que as bases foram carregadas corretamente
     if applicants is None or vagas is None or prospects is None:
