@@ -11,15 +11,17 @@ from nltk.corpus import stopwords
 
 # Carregar os dados do Google Drive
 def carregar_dados_do_drive():
-    url = "https://drive.google.com/uc?id=1CHv4tvbiLRUbqLZGGMAQdLhelUy-tQI3"
+    url_applicants = "https://drive.google.com/uc?id=1CHv4tvbiLRUbqLZGGMAQdLhelUy-tQI3"
+    url_vagas = "https://drive.google.com/file/d/1b9uU-izFPVxdBePzWLbY50jq_XDwLsgl/view?usp=drive_link"
+    url_prospects = "https://drive.google.com/file/d/1RxZ7raYToWNPoqOlmqs7p5R_NnaMv0xB/view?usp=drive_link"
     output_prospects = "prospects.json"
     output_vagas = "vagas.json"
     output_applicants = "applicants.json"
     
     # Baixar os arquivos
-    gdown.download(url, output_prospects, quiet=False)
-    gdown.download(url, output_vagas, quiet=False)
-    gdown.download(url, output_applicants, quiet=False)
+    gdown.download(url_prospects, output_prospects, quiet=False)
+    gdown.download(url_vagas, output_vagas, quiet=False)
+    gdown.download(url_applicants, output_applicants, quiet=False)
 
     # Carregar os arquivos JSON
     with open(output_prospects, "r", encoding="utf-8") as f:
