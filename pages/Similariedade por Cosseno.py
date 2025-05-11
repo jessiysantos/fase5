@@ -11,9 +11,9 @@ def load_data_from_drive():
     with open(output, 'r', encoding='utf-8') as f:
         return json.load(f)
 
-data = load_data_from_drive()
+applicants = load_data_from_drive()
 # Extraindo as informações para novas colunas
-ap = data.T
+ap = applicants.T
 ap['nome'] = ap['informacoes_pessoais'].apply(lambda x: x.get('nome', ''))
 ap['idade'] = ap['informacoes_pessoais'].apply(lambda x: calcular_idade(x.get('data_nascimento', '0000-00-00')))
 ap['sexo'] = ap['informacoes_pessoais'].apply(lambda x: x.get('sexo', ''))
