@@ -1,6 +1,7 @@
 import pandas as pd
 import re
 from datetime import datetime
+import streamlit as st
 
 # Carregar os dados
 @st.cache_data
