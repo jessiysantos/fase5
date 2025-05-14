@@ -68,7 +68,7 @@ if "remuneracao" in df.columns and "nivel_profissional" in df.columns:
         x="nivel_profissional",
         y="remuneracao",
         color="nivel_profissional",
-        text=media["remuneracao"].round(2),
+        text=media["remuneracao"].round(0),
         title="Média Salarial por Nível Profissional"
     )
 
@@ -88,7 +88,7 @@ else:
     st.warning("Colunas 'remuneracao' ou 'nivel_profissional' não estão disponíveis.")
 
 # Exibição do CV
-st.subheader("Visualizar Currículo (cv_pt)")
+st.subheader("Visualizar Currículos")
 if "nome" in df.columns and "cv_pt" in df.columns:
     nome = st.selectbox("Selecione um candidato", df["nome"].dropna().unique())
     cv = df[df["nome"] == nome]["cv_pt"].values[0]
