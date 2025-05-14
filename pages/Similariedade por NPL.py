@@ -55,7 +55,7 @@ def find_top_10_matches(vaga_description, data):
 
     top_matches = []
     for similarity, candidate in scored_candidates:
-        if similarity > 0.70:
+        if similarity > 0.50:
             top_matches.append({
                 'nome': candidate['nome'],
                 'email': candidate['email'],
