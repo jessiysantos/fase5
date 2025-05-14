@@ -77,7 +77,7 @@ if "remuneracao" in df.columns and "nivel_profissional" in df.columns:
 
     fig2.update_layout(
         yaxis=dict(
-            range=[0, 50000],
+            range=[0, 10000],
             tick0=0,
             dtick=1000,
             title="Remuneração"
