@@ -60,7 +60,8 @@ st.plotly_chart(fig, use_container_width=True)
 st.subheader("Média Salarial por Nível Profissional")
 
 if "remuneracao" in df.columns and "nivel_profissional" in df.columns:
-    media = df.groupby("nivel_profissional")["remuneracao"].mean().reset_index()
+    df_filtrado = df.dropna(subset=["remuneracao", "nivel_profissional"])
+    media = df_filtrado.groupby("nivel_profissional")["remuneracao"].mean().reset_index()
 
     fig2 = px.bar(
         media,
