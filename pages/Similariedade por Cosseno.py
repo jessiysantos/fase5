@@ -59,6 +59,6 @@ if vaga_input:
     df_top10 = df_resultado.sort_values(by="similaridade", ascending=False).head(10)
 
     # Exibir colunas desejadas
-    colunas_exibir = ["id", "nome", "idade", "estado_civil", "local", "palavras_chave", "similaridade"]
+    colunas_exibir = ["id", "nome", "local", "palavras_chave","titulo_profissional","conhecimentos_tecnicos", "certificacoes","nivel_ingles", "nivel_espanhol", "objetivo_profissional", "remuneracao", "similaridade"]
     st.subheader("🧠 Top 10 Candidatos mais compatíveis:")
     st.dataframe(df_top10[colunas_exibir], use_container_width=True)
