@@ -56,37 +56,6 @@ else:
 
 st.plotly_chart(fig, use_container_width=True)
 
-# Gráfico de média salarial por nível profissional
-st.subheader("Média Salarial por Nível Profissional")
-
-if "remuneracao" in df.columns and "nivel_profissional" in df.columns:
-    df_filtrado = df.dropna(subset=["remuneracao", "nivel_profissional"])
-    media = df_filtrado.groupby("nivel_profissional")["remuneracao"].median().reset_index()
-
-    fig2 = px.bar(
-        media,
-        x="nivel_profissional",
-        y="remuneracao",
-        color="nivel_profissional",
-        text=media["remuneracao"].round(0),
-        title="Média Salarial por Nível Profissional"
-    )
-
-    fig2.update_layout(
-        yaxis=dict(
-            range=[0, 10000],
-            tick0=0,
-            dtick=1000,
-            title="Remuneração (R$)"
-        ),
-        xaxis_title="Nível Profissional",
-        showlegend=False
-    )
-
-    st.plotly_chart(fig2, use_container_width=True)
-else:
-    st.warning("Colunas 'remuneracao' ou 'nivel_profissional' não estão disponíveis.")
-
 # Exibição do CV
 st.subheader("Visualizar Currículos")
 if "nome" in df.columns and "cv_pt" in df.columns:
