@@ -22,45 +22,6 @@ colunas_features = [
     "objetivo_profissional", "remuneracao", "cv_pt"
 ]
 
-applicants = load_data_from_drive()
-ap = applicants.T
-ap['nome'] = ap['informacoes_pessoais'].apply(lambda x: x.get('nome', ''))
-ap['idade'] = ap['informacoes_pessoais'].apply(lambda x: calcular_idade(x.get('data_nascimento', '0000-00-00')))
-ap['sexo'] = ap['informacoes_pessoais'].apply(lambda x: x.get('sexo', ''))
-ap['estado_civil'] = ap['informacoes_pessoais'].apply(lambda x: x.get('estado_civil', ''))
-ap['pcd'] = ap['informacoes_pessoais'].apply(lambda x: x.get('pcd', ''))
-ap.fillna("Não Informado")
-# Função para extrair frases de um texto de CV
-def extrair_frases_cv(texto):
-    if not isinstance(texto, str):
-        return []
-    # Substitui marcadores e quebras em pontuação simples
-    texto = texto.replace('•', '.').replace('–', '-').replace('\xad', '-')
-    # Quebra por novas linhas ou por ponto final seguido de espaço
-    frases = re.split(r'\n+|\. +|\.$', texto)
-    # Remove espaços extras e frases vazias
-    return [frase.strip() for frase in frases if frase.strip()]
-# Aplica a função ao DataFrame 'ap' na coluna 'cv_pt'
-ap['cv_pt_lista'] = ap['cv_pt'].apply(extrair_frases_cv)
-# Lista dos campos que você quer extrair
-campos_info = [
-    'titulo_profissional',
-    'conhecimentos_tecnicos',
-    'certificacoes',
-    'nivel_profissional',
-    'remuneracao'
-]
-# Extrai os campos como colunas novas
-info_extraida = ap['informacoes_profissionais'].apply(pd.Series)[campos_info]
-info_extraida1 = ap['formacao_e_idiomas'].apply(pd.Series)[['nivel_academico','nivel_ingles','nivel_espanhol','outro_idioma']]
-info_extraida2 = ap['infos_basicas'].apply(pd.Series)[['objetivo_profissional','local']]
-
-# Junta ao DataFrame original
-ap = pd.concat([ap, info_extraida,info_extraida1,info_extraida2], axis=1)
-ap = ap.drop(['informacoes_pessoais','informacoes_profissionais','formacao_e_idiomas','infos_basicas'],axis=1)
-candidatos = ap[['nome','idade','estado_civil','local','pcd','titulo_profissional','conhecimentos_tecnicos','certificacoes','nivel_profissional','nivel_academico','nivel_ingles','nivel_espanhol','outro_idioma','objetivo_profissional','remuneracao','cv_pt']].reset_index()
-df_candidatos = pd.DataFrame(candidatos)
-
 # Criar uma nova coluna com todas as informações combinadas como texto
 df_candidatos["texto_completo"] = df_candidatos[colunas_features].astype(str).agg(" ".join, axis=1)
 
