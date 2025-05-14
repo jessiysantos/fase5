@@ -16,9 +16,9 @@ df_candidatos = pd.read_csv('candidatos.csv')
 
 # Lista de colunas a serem usadas como features textuais
 colunas_features = [
-    "idade", "estado_civil", "local", "pcd", "titulo_profissional",
+    "local", "pcd", "titulo_profissional",
     "conhecimentos_tecnicos", "certificacoes", "nivel_profissional",
-    "nivel_academico", "nivel_ingles", "nivel_espanhol", "outro_idioma",
+    "nivel_academico", "nivel_ingles", "nivel_espanhol",
     "objetivo_profissional", "remuneracao", "cv_pt"
 ]
 
