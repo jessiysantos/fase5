@@ -2,10 +2,11 @@ import streamlit as st
 import pandas as pd
 import plotly.express as px
 
-# Carregar dados (substitua pelo seu caminho real)
+# Carregar dados diretamente do GitHub
 @st.cache_data
 def carregar_dados():
-    return pd.read_csv("dados_candidatos.csv")  # Substitua pelo seu arquivo
+    url = "https://raw.githubusercontent.com/jessiysantos/fase5/main/candidatos.csv"
+    return pd.read_csv(url)
 
 df = carregar_dados()
 
