@@ -17,7 +17,7 @@ st.markdown("""
 ### 👋 Seja bem-vindo!
 Este painel permite explorar os dados dos candidatos por meio de gráficos interativos.
 
-➡️ Utilize as **abas laterais** para acessar outras funcionalidades, como a **pesquisa por similaridade** entre perfis e vagas.
+← Utilize as **abas laterais** para acessar outras funcionalidades, como a **pesquisa por similaridade** entre perfis e vagas.
 """)
 
 # Seletor de gráfico
@@ -38,13 +38,13 @@ else:
 
 st.plotly_chart(fig, use_container_width=True)
 
-# Gráfico de remuneração
-if st.checkbox("Mostrar gráfico de remuneração por nível profissional"):
-    if "remuneracao" in df.columns and "nivel_profissional" in df.columns:
-        fig2 = px.box(df, x="nivel_profissional", y="remuneracao", title="Remuneração por Nível Profissional")
-        st.plotly_chart(fig2, use_container_width=True)
-    else:
-        st.warning("Colunas 'remuneracao' ou 'nivel_profissional' não estão disponíveis.")
+# Gráfico de remuneração com limite no eixo Y
+if "remuneracao" in df.columns and "nivel_profissional" in df.columns:
+    fig2 = px.box(df, x="nivel_profissional", y="remuneracao", title="Remuneração por Nível Profissional")
+    fig2.update_layout(yaxis=dict(range=[0, 50000]))  # Limitar o eixo Y até 50.000
+    st.plotly_chart(fig2, use_container_width=True)
+else:
+    st.warning("Colunas 'remuneracao' ou 'nivel_profissional' não estão disponíveis.")
 
 # Visualização do CV
 st.subheader("Visualizar Currículo (cv_pt)")
