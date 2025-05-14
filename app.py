@@ -31,7 +31,7 @@ st.markdown("""
 ### 👋 Seja bem-vindo!
 Este painel permite explorar os dados dos candidatos por meio de gráficos interativos.
 
-→ Utilize as **abas laterais** para acessar outras funcionalidades, como a **pesquisa por similaridade** entre perfis e vagas.
+⬅️ Utilize as **abas laterais** para acessar outras funcionalidades, como a **pesquisa por similaridade** entre perfis e vagas.
 """)
 
 # Campo selecionável para visualização
