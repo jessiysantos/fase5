@@ -10,7 +10,7 @@ nltk.download('stopwords')
 stopwords_pt = stopwords.words('portuguese')
 
 # Carregar os dados
-ap = pd.read_csv('candidatos.csv')
+df_candidatos = pd.read_csv('candidatos.csv')
 
 
 
