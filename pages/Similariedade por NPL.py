@@ -55,7 +55,7 @@ def find_top_10_matches(vaga_description, data):
 
     top_matches = []
     for similarity, candidate in scored_candidates:
-        if similarity > 0.50:
+        if similarity > 0.70:
             top_matches.append({
                 'nome': candidate['nome'],
                 'email': candidate['email'],
@@ -70,7 +70,7 @@ def find_top_10_matches(vaga_description, data):
     return top_matches
 
 # 📋 Formulário de Entrada
-st.markdown("### ✍️ Descreva a vaga")
+st.markdown("<h3 style='color:#4CAF50;'>✍️ Descreva a vaga</h3>", unsafe_allow_html=True)
 vaga_description = st.text_area("Digite a descrição da vaga", "Implantação e manutenção de software")
 
 # 🔘 Botão de ação
@@ -78,10 +78,10 @@ if st.button("🔍 Encontrar Candidatos"):
     top_matches = find_top_10_matches(vaga_description, data)
 
     if top_matches:
-        st.markdown("## 👥 Candidatos Recomendados")
+        st.markdown("<h3 style='color:#4CAF50;'>👥 Candidatos Recomendados</h3>", unsafe_allow_html=True)
         for i, match in enumerate(top_matches, 1):
             with st.container():
-                st.markdown(f"### {i}. {match['nome']}")
+                st.markdown(f"<h4 style='color:#4CAF50;'> {i}. {match['nome']} </h4>", unsafe_allow_html=True)
                 col1, col2 = st.columns(2)
                 with col1:
                     st.markdown(f"📧 **Email:** {match['email']}")
@@ -92,4 +92,4 @@ if st.button("🔍 Encontrar Candidatos"):
                     st.markdown(f"✅ **Similaridade:** `{match['similaridade']}`")
                 st.markdown("---")
     else:
-        st.warning("⚠️ Nenhum candidato com similaridade para a vaga foi encontrado.")
+        st.warning("⚠️ Nenhum candidato com similaridade maior que 0.70 foi encontrado.")
