@@ -61,7 +61,7 @@ st.subheader("Média Salarial por Nível Profissional")
 
 if "remuneracao" in df.columns and "nivel_profissional" in df.columns:
     df_filtrado = df.dropna(subset=["remuneracao", "nivel_profissional"])
-    media = df_filtrado.groupby("nivel_profissional")["remuneracao"].mean().reset_index()
+    media = df_filtrado.groupby("nivel_profissional")["remuneracao"].median().reset_index()
 
     fig2 = px.bar(
         media,
