@@ -5,22 +5,11 @@ import streamlit as st
 
 # Carregar os dados
 @st.cache_data
-def load_data_from_drive():
-    url = "https://drive.google.com/uc?id=1CHv4tvbiLRUbqLZGGMAQdLhelUy-tQI3"
-    output = "applicants.json"
-    gdown.download(url, output, quiet=False)
-    with open(output, 'r', encoding='utf-8') as f:
-        return json.load(f)
+ ap = pd.read_csv('candidatos.csv')
 
 applicants = load_data_from_drive()
 # Extraindo as informações para novas colunas
-ap = applicants.T
-ap['nome'] = ap['informacoes_pessoais'].apply(lambda x: x.get('nome', ''))
-ap['idade'] = ap['informacoes_pessoais'].apply(lambda x: calcular_idade(x.get('data_nascimento', '0000-00-00')))
-ap['sexo'] = ap['informacoes_pessoais'].apply(lambda x: x.get('sexo', ''))
-ap['estado_civil'] = ap['informacoes_pessoais'].apply(lambda x: x.get('estado_civil', ''))
-ap['pcd'] = ap['informacoes_pessoais'].apply(lambda x: x.get('pcd', ''))
-ap.fillna("Não Informado")
+
 # Função para extrair frases de um texto de CV
 def extrair_frases_cv(texto):
     if not isinstance(texto, str):
