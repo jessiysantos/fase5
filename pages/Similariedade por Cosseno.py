@@ -3,13 +3,30 @@ import re
 from datetime import datetime
 import streamlit as st
 
+nltk.download('stopwords')
+stopwords_pt = stopwords.words('portuguese')
+
 # Carregar os dados
-@st.cache_data
- ap = pd.read_csv('candidatos.csv')
+ap = pd.read_csv('candidatos.csv')
+
+
+
+# Lista de colunas a serem usadas como features textuais
+colunas_features = [
+    "idade", "estado_civil", "local", "pcd", "titulo_profissional",
+    "conhecimentos_tecnicos", "certificacoes", "nivel_profissional",
+    "nivel_academico", "nivel_ingles", "nivel_espanhol", "outro_idioma",
+    "objetivo_profissional", "remuneracao", "cv_pt"
+]
 
 applicants = load_data_from_drive()
-# Extraindo as informações para novas colunas
-
+ap = applicants.T
+ap['nome'] = ap['informacoes_pessoais'].apply(lambda x: x.get('nome', ''))
+ap['idade'] = ap['informacoes_pessoais'].apply(lambda x: calcular_idade(x.get('data_nascimento', '0000-00-00')))
+ap['sexo'] = ap['informacoes_pessoais'].apply(lambda x: x.get('sexo', ''))
+ap['estado_civil'] = ap['informacoes_pessoais'].apply(lambda x: x.get('estado_civil', ''))
+ap['pcd'] = ap['informacoes_pessoais'].apply(lambda x: x.get('pcd', ''))
+ap.fillna("Não Informado")
 # Função para extrair frases de um texto de CV
 def extrair_frases_cv(texto):
     if not isinstance(texto, str):
@@ -39,30 +56,7 @@ info_extraida2 = ap['infos_basicas'].apply(pd.Series)[['objetivo_profissional','
 ap = pd.concat([ap, info_extraida,info_extraida1,info_extraida2], axis=1)
 ap = ap.drop(['informacoes_pessoais','informacoes_profissionais','formacao_e_idiomas','infos_basicas'],axis=1)
 candidatos = ap[['nome','idade','estado_civil','local','pcd','titulo_profissional','conhecimentos_tecnicos','certificacoes','nivel_profissional','nivel_academico','nivel_ingles','nivel_espanhol','outro_idioma','objetivo_profissional','remuneracao','cv_pt']].reset_index()
-candidatos = pd.DataFrame(candidatos)
-candidatos.rename(columns={'index':'id'},inplace=True)
-
-###################### STREAMLIT ############################
-
-import streamlit as st
-import pandas as pd
-from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.metrics.pairwise import cosine_similarity
-import nltk
-from nltk.corpus import stopwords
-
-nltk.download('stopwords')
-stopwords_pt = stopwords.words('portuguese')
-
-df_candidatos = candidatos
-
-# Lista de colunas a serem usadas como features textuais
-colunas_features = [
-    "idade", "estado_civil", "local", "pcd", "titulo_profissional",
-    "conhecimentos_tecnicos", "certificacoes", "nivel_profissional",
-    "nivel_academico", "nivel_ingles", "nivel_espanhol", "outro_idioma",
-    "objetivo_profissional", "remuneracao", "cv_pt"
-]
+df_candidatos = pd.DataFrame(candidatos)
 
 # Criar uma nova coluna com todas as informações combinadas como texto
 df_candidatos["texto_completo"] = df_candidatos[colunas_features].astype(str).agg(" ".join, axis=1)
