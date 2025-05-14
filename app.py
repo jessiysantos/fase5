@@ -37,8 +37,8 @@ Este painel permite explorar os dados dos candidatos por meio de gráficos inter
 # Campo selecionável para visualização
 st.subheader("Distribuição por Campo Selecionado")
 campo = st.selectbox("Escolha o campo para visualizar:", [
-    "local", "pcd", "titulo_profissional", "conhecimentos_tecnicos",
-    "certificacoes", "nivel_profissional", "nivel_academico",
+    "local", "pcd", "titulo_profissional",
+    "nivel_profissional", "nivel_academico",
     "nivel_ingles", "nivel_espanhol", "objetivo_profissional"
 ])
 
