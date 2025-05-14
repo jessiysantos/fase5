@@ -38,10 +38,30 @@ else:
 
 st.plotly_chart(fig, use_container_width=True)
 
-# Gráfico de remuneração com limite no eixo Y
+# Gráfico de remuneração com limite no eixo Y, média salarial e intervalos de 1000 em 1000
 if "remuneracao" in df.columns and "nivel_profissional" in df.columns:
+    # Calcular a média salarial por nível profissional
+    media_salarial = df.groupby("nivel_profissional")["remuneracao"].mean().reset_index()
+    
+    # Criar o gráfico de boxplot
     fig2 = px.box(df, x="nivel_profissional", y="remuneracao", title="Remuneração por Nível Profissional")
-    fig2.update_layout(yaxis=dict(range=[0, 10000]))  # Limitar o eixo Y até 50.000
+    
+    # Adicionar linha de média salarial por nível profissional
+    fig2.add_trace(
+        go.Scatter(x=media_salarial["nivel_profissional"], y=media_salarial["remuneracao"],
+                   mode='lines+markers', name='Média Salarial', line=dict(color='red', dash='dash'))
+    )
+    
+    # Limitar o eixo Y até 50.000 e configurar os ticks de 1000 em 1000
+    fig2.update_layout(
+        yaxis=dict(
+            range=[0, 50000],
+            tick0=0,
+            dtick=1000,
+            title="Remuneração"
+        )
+    )
+    
     st.plotly_chart(fig2, use_container_width=True)
 else:
     st.warning("Colunas 'remuneracao' ou 'nivel_profissional' não estão disponíveis.")
