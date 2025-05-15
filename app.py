@@ -59,7 +59,7 @@ st.plotly_chart(fig, use_container_width=True)
 # Exibição do CV
 st.subheader("Visualizar Currículos")
 if "nome" in df.columns and "cv_pt" in df.columns:
-    nome = st.selectbox("Selecione um candidato", df["nome"].dropna().unique()sort_values(by="nome"))
+    nome = st.selectbox("Selecione um candidato", df["nome"].dropna().unique()sort_values(by='nome'))
     cv = df[df["nome"] == nome]["cv_pt"].values[0]
     st.text_area("Currículo em Português", value=cv, height=300)
 else:
