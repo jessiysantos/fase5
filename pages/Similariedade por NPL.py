@@ -3,10 +3,14 @@ import streamlit as st
 import gdown
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
+import nltk
 
 # 🌐 Título da Aplicação
 st.set_page_config(page_title="Sugestão de Candidatos", layout="wide")
 st.title("🔍 Sistema Inteligente de Sugestão de Candidatos")
+
+nltk.download('stopwords')
+stopwords_pt = stopwords.words('portuguese')
 
 # 📥 Carregamento dos Dados
 @st.cache_data
@@ -46,7 +50,7 @@ def find_top_10_matches(vaga_description, data):
 
     descriptions.append(vaga_description)
 
-    vectorizer = TfidfVectorizer(stop_words='english')
+    vectorizer = TfidfVectorizer(stop_words=stopwords_pt)
     tfidf_matrix = vectorizer.fit_transform(descriptions)
 
     cosine_sim = cosine_similarity(tfidf_matrix[-1], tfidf_matrix[:-1])[0]
