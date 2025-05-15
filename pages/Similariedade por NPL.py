@@ -71,7 +71,7 @@ def find_top_10_matches(vaga_description, data):
 
 # 📋 Formulário de Entrada
 st.markdown("<h3 style='color:#4CAF50;'>✍️ Descreva a vaga</h3>", unsafe_allow_html=True)
-vaga_description = st.text_area("Digite a descrição da vaga", "Implantação e manutenção de software")
+vaga_description = st.text_area("Digite a descrição da vaga", "Implantação e manutenção de Software")
 
 # 🔘 Botão de ação
 if st.button("🔍 Encontrar Candidatos"):
