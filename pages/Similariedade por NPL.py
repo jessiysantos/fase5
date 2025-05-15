@@ -4,6 +4,7 @@ import gdown
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 import nltk
+from nltk.corpus import stopwords
 
 # 🌐 Título da Aplicação
 st.set_page_config(page_title="Sugestão de Candidatos", layout="wide")
