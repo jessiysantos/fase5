@@ -59,7 +59,8 @@ def extract_candidate_info(candidate_data):
             'email': candidate_data['infos_basicas']['email'],
             'titulo_profissional': candidate_data['informacoes_profissionais']['titulo_profissional'],
             'area_atuacao': candidate_data['informacoes_profissionais']['area_atuacao'],
-            'conhecimentos_tecnicos': f"{candidate_data['informacoes_profissionais']['conhecimentos_tecnicos']} {keywords_cv}"
+            'conhecimentos_tecnicos': candidate_data['informacoes_profissionais']['conhecimentos_tecnicos'],
+            'keywords_cv': keywords_cv  # <- Adiciona aqui
         }
     except KeyError:
         return None
