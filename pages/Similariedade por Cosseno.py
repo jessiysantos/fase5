@@ -124,6 +124,7 @@ if st.button("🔍 Encontrar Candidatos"):
                 with col2:
                     st.markdown(f"🧠 **Conhecimentos Técnicos:** {match['conhecimentos_tecnicos']}")
                     st.markdown(f"✅ **Similaridade:** `{match['similaridade']}`")
+                    st.markdown(f"🔑 **Palavras-chave do CV:** `{match['keywords_cv']}`")
                 st.markdown("---")
     else:
         st.warning("⚠️ Nenhum candidato com similaridade maior que 0.50 foi encontrado.")
