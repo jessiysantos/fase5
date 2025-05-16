@@ -24,36 +24,18 @@ def load_data_from_drive():
 
 data = load_data_from_drive()
 
-#Nova função para extrair palavras-chave do cv_pt
-def extract_keywords(text, top_n=10):
-    if not text:
-        return ""
-    vectorizer = TfidfVectorizer(stop_words=stopwords_pt, max_features=1000)
-    tfidf_matrix = vectorizer.fit_transform([text])
-    tfidf_scores = tfidf_matrix.toarray()[0]
-    words = vectorizer.get_feature_names_out()
-    ranked_words = sorted(zip(tfidf_scores, words), reverse=True)
-    keywords = [word for _, word in ranked_words[:top_n]]
-    return ' '.join(keywords)
-
-
 # 📄 Extração de Informações
 def extract_candidate_info(candidate_data):
     try:
-        cv_text = candidate_data.get('cv_pt', '')
-        keywords_cv = extract_keywords(cv_text)
-
         return {
             'nome': candidate_data['infos_basicas']['nome'],
             'email': candidate_data['infos_basicas']['email'],
             'titulo_profissional': candidate_data['informacoes_profissionais']['titulo_profissional'],
             'area_atuacao': candidate_data['informacoes_profissionais']['area_atuacao'],
-            'conhecimentos_tecnicos': candidate_data['informacoes_profissionais']['conhecimentos_tecnicos'],
-            'keywords_cv': keywords_cv
+            'conhecimentos_tecnicos': candidate_data['informacoes_profissionais']['conhecimentos_tecnicos']
         }
     except KeyError:
         return None
-
 
 # 🔎 Função de Similaridade
 def find_top_10_matches(vaga_description, data):
@@ -63,7 +45,7 @@ def find_top_10_matches(vaga_description, data):
     for candidate_data in data.values():
         info = extract_candidate_info(candidate_data)
         if info:
-            description = f"{info['titulo_profissional']} {info['area_atuacao']} {info['conhecimentos_tecnicos']} {info['keywords_cv']}"
+            description = f"{info['titulo_profissional']} {info['area_atuacao']} {info['conhecimentos_tecnicos']}"
             descriptions.append(description)
             candidates_info.append(info)
 
