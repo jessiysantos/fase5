@@ -96,6 +96,7 @@ def find_top_10_matches(vaga_description, data):
                 'titulo_profissional': candidate['titulo_profissional'],
                 'area_atuacao': candidate['area_atuacao'],
                 'conhecimentos_tecnicos': candidate['conhecimentos_tecnicos'],
+                'keywords_cv': candidate['keywords_cv'],
                 'similaridade': f"{similarity:.2f}"
             })
         if len(top_matches) == 10:
