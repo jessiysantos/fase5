@@ -1,64 +1,117 @@
+import json
 import streamlit as st
-import pandas as pd
+import gdown
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 import nltk
 from nltk.corpus import stopwords
-import gdown
 
+# 🌐 Título da Aplicação
+st.set_page_config(page_title="Sugestão de Candidatos", layout="wide")
+st.title("🔍 Sistema Inteligente de Sugestão de Candidatos")
+
+# 📦 Downloads necessários
 nltk.download('stopwords')
 stopwords_pt = stopwords.words('portuguese')
 
-# Carregar os dados
-df_candidatos = pd.read_csv('candidatos.csv')
+# 📥 Carregamento dos Dados
+@st.cache_data
+def load_data_from_drive():
+    url = "https://drive.google.com/uc?id=1CHv4tvbiLRUbqLZGGMAQdLhelUy-tQI3"
+    output = "applicants.json"
+    gdown.download(url, output, quiet=False)
+    with open(output, 'r', encoding='utf-8') as f:
+        return json.load(f)
 
+data = load_data_from_drive()
 
+# 🔑 Extração de palavras-chave do campo cv_pt
+def extract_keywords(text, top_n=10):
+    if not text or not isinstance(text, str):
+        return ""
+    vectorizer = TfidfVectorizer(stop_words=stopwords_pt, max_features=1000)
+    tfidf_matrix = vectorizer.fit_transform([text])
+    tfidf_scores = tfidf_matrix.toarray()[0]
+    words = vectorizer.get_feature_names_out()
+    ranked_words = sorted(zip(tfidf_scores, words), reverse=True)
+    keywords = [word for _, word in ranked_words[:top_n]]
+    return ' '.join(keywords)
 
-# Lista de colunas a serem usadas como features textuais
-colunas_features = [
-    "local", "pcd", "titulo_profissional",
-    "conhecimentos_tecnicos", "certificacoes", "nivel_profissional",
-    "nivel_academico", "nivel_ingles", "nivel_espanhol",
-    "objetivo_profissional", "remuneracao", "cv_pt"
-]
+# 📄 Extração de Informações
+def extract_candidate_info(candidate_data):
+    try:
+        cv_text = candidate_data.get('cv_pt', '')
+        keywords_cv = extract_keywords(cv_text)
 
-# Criar uma nova coluna com todas as informações combinadas como texto
-df_candidatos["texto_completo"] = df_candidatos[colunas_features].astype(str).agg(" ".join, axis=1)
+        return {
+            'nome': candidate_data['infos_basicas']['nome'],
+            'email': candidate_data['infos_basicas']['email'],
+            'titulo_profissional': candidate_data['informacoes_profissionais']['titulo_profissional'],
+            'area_atuacao': candidate_data['informacoes_profissionais']['area_atuacao'],
+            'conhecimentos_tecnicos': candidate_data['informacoes_profissionais']['conhecimentos_tecnicos'],
+            'keywords_cv': keywords_cv
+        }
+    except KeyError:
+        return None
 
-# =========================
-# Streamlit Interface
-# =========================
-st.title("🔍 Buscador de Candidatos por Similaridade de Perfil Completo")
+# 🔎 Função de Similaridade
+def find_top_10_matches(vaga_description, data):
+    candidates_info = []
+    descriptions = []
 
-vaga_input = st.text_area("Descreva a vaga desejada:")
+    for candidate_data in data.values():
+        info = extract_candidate_info(candidate_data)
+        if info:
+            description = f"{info['titulo_profissional']} {info['area_atuacao']} {info['conhecimentos_tecnicos']} {info['keywords_cv']}"
+            descriptions.append(description)
+            candidates_info.append(info)
 
-if vaga_input:
-    # Vetorização
+    descriptions.append(vaga_description)
+
     vectorizer = TfidfVectorizer(stop_words=stopwords_pt)
-    tfidf_matrix = vectorizer.fit_transform([vaga_input] + df_candidatos["texto_completo"].tolist())
+    tfidf_matrix = vectorizer.fit_transform(descriptions)
 
-    # Similaridade
-    vaga_vector = tfidf_matrix[0]
-    cv_vectors = tfidf_matrix[1:]
-    scores = cosine_similarity(vaga_vector, cv_vectors).flatten()
+    cosine_sim = cosine_similarity(tfidf_matrix[-1], tfidf_matrix[:-1])[0]
 
-    # Extrair palavras-chave mais relevantes do candidato
-    feature_names = vectorizer.get_feature_names_out()
-    keywords_por_cv = []
-    for vec in cv_vectors:
-        top_indices = vec.toarray().argsort()[0][-5:][::-1]
-        top_keywords = [feature_names[i] for i in top_indices if vec[0, i] > 0]
-        keywords_por_cv.append(", ".join(top_keywords))
+    scored_candidates = sorted(zip(cosine_sim, candidates_info), reverse=True, key=lambda x: x[0])
 
-    # Criar DataFrame de resultados
-    df_resultado = df_candidatos.copy()
-    df_resultado["similaridade"] = scores
-    df_resultado["palavras_chave"] = keywords_por_cv
+    top_matches = []
+    for similarity, candidate in scored_candidates:
+        if similarity > 0.50:
+            top_matches.append({
+                'nome': candidate['nome'],
+                'email': candidate['email'],
+                'titulo_profissional': candidate['titulo_profissional'],
+                'area_atuacao': candidate['area_atuacao'],
+                'conhecimentos_tecnicos': candidate['conhecimentos_tecnicos'],
+                'similaridade': f"{similarity:.2f}"
+            })
+        if len(top_matches) == 10:
+            break
 
-    # Ordenar os top 10 candidatos
-    df_top10 = df_resultado.sort_values(by="similaridade", ascending=False).head(10)
+    return top_matches
 
-    # Exibir colunas desejadas
-    colunas_exibir = ["id", "nome", "local", "palavras_chave","titulo_profissional","conhecimentos_tecnicos", "certificacoes","nivel_ingles", "nivel_espanhol", "objetivo_profissional", "remuneracao", "similaridade"]
-    st.subheader("🧠 Top 10 Candidatos mais compatíveis:")
-    st.dataframe(df_top10[colunas_exibir], use_container_width=True)
+# 📋 Formulário de Entrada
+st.markdown("<h3 style='color:#4CAF50;'>✍️ Descreva a vaga</h3>", unsafe_allow_html=True)
+vaga_description = st.text_area("Digite a descrição da vaga", "Implantação e manutenção de Software")
+
+# 🔘 Botão de ação
+if st.button("🔍 Encontrar Candidatos"):
+    top_matches = find_top_10_matches(vaga_description, data)
+
+    if top_matches:
+        st.markdown("<h3 style='color:#4CAF50;'>👥 Candidatos Recomendados</h3>", unsafe_allow_html=True)
+        for i, match in enumerate(top_matches, 1):
+            with st.container():
+                st.markdown(f"<h4 style='color:#4CAF50;'> {i}. {match['nome']} </h4>", unsafe_allow_html=True)
+                col1, col2 = st.columns(2)
+                with col1:
+                    st.markdown(f"📧 **Email:** {match['email']}")
+                    st.markdown(f"💼 **Título Profissional:** {match['titulo_profissional']}")
+                    st.markdown(f"📍 **Área de Atuação:** {match['area_atuacao']}")
+                with col2:
+                    st.markdown(f"🧠 **Conhecimentos Técnicos:** {match['conhecimentos_tecnicos']}")
+                    st.markdown(f"✅ **Similaridade:** `{match['similaridade']}`")
+                st.markdown("---")
+    else:
+        st.warning("⚠️ Nenhum candidato com similaridade maior que 0.50 foi encontrado.")
