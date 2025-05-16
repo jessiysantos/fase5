@@ -117,14 +117,15 @@ if st.button("🔍 Encontrar Candidatos"):
             with st.container():
                 st.markdown(f"<h4 style='color:#4CAF50;'> {i}. {match['nome']} </h4>", unsafe_allow_html=True)
                 col1, col2 = st.columns(2)
-                with col1:
-                    st.markdown(f"📧 **Email:** {match['email']}")
-                    st.markdown(f"💼 **Título Profissional:** {match['titulo_profissional']}")
-                    st.markdown(f"📍 **Área de Atuação:** {match['area_atuacao']}")
-                with col2:
-                    st.markdown(f"🧠 **Conhecimentos Técnicos:** {match['conhecimentos_tecnicos']}")
-                    st.markdown(f"✅ **Similaridade:** `{match['similaridade']}`")
-                    st.markdown(f"🔑 **Palavras-chave do CV:** `{match['keywords_cv']}`")
-                st.markdown("---")
+            with col1:
+                st.markdown(f"📧 **Email:** {match['email']}")
+                st.markdown(f"💼 **Título Profissional:** {match['titulo_profissional']}")
+                st.markdown(f"📍 **Área de Atuação:** {match['area_atuacao']}")
+            with col2:
+                st.markdown(f"🧠 **Conhecimentos Técnicos:** {match['conhecimentos_tecnicos']}")
+                st.markdown(f"✅ **Similaridade:** `{match['similaridade']}`")
+            st.markdown(f"🔑 **Palavras-chave do CV:** `{match['keywords_cv']}`")
+            st.markdown("---")
+
     else:
         st.warning("⚠️ Nenhum candidato com similaridade maior que 0.50 foi encontrado.")
