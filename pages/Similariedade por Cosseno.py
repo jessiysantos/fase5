@@ -29,30 +29,41 @@ data = load_data_from_drive()
 def extract_keywords(text, top_n=10):
     if not text or not isinstance(text, str):
         return ""
-    vectorizer = TfidfVectorizer(stop_words=stopwords_pt, max_features=1000)
-    tfidf_matrix = vectorizer.fit_transform([text])
-    tfidf_scores = tfidf_matrix.toarray()[0]
-    words = vectorizer.get_feature_names_out()
-    ranked_words = sorted(zip(tfidf_scores, words), reverse=True)
-    keywords = [word for _, word in ranked_words[:top_n]]
-    return ' '.join(keywords)
+
+    # Limpeza simples
+    text = text.lower().replace('\n', ' ')
+    words = [w for w in text.split() if w not in stopwords_pt and len(w) > 2]
+
+    if not words:
+        return ""
+
+    vectorizer = TfidfVectorizer(stop_words=stopwords_pt)
+    try:
+        tfidf_matrix = vectorizer.fit_transform([" ".join(words)])
+    except ValueError:
+        return ""
+
+    tfidf_scores = zip(vectorizer.get_feature_names_out(), tfidf_matrix.toarray()[0])
+    sorted_keywords = sorted(tfidf_scores, key=lambda x: x[1], reverse=True)
+
+    return " ".join([kw for kw, _ in sorted_keywords[:top_n]])
+
 
 # 📄 Extração de Informações
 def extract_candidate_info(candidate_data):
     try:
-        cv_text = candidate_data.get('cv_pt', '')
+        cv_text = candidate_data['informacoes_profissionais'].get('cv_pt', '')
         keywords_cv = extract_keywords(cv_text)
-
         return {
             'nome': candidate_data['infos_basicas']['nome'],
             'email': candidate_data['infos_basicas']['email'],
             'titulo_profissional': candidate_data['informacoes_profissionais']['titulo_profissional'],
             'area_atuacao': candidate_data['informacoes_profissionais']['area_atuacao'],
-            'conhecimentos_tecnicos': candidate_data['informacoes_profissionais']['conhecimentos_tecnicos'],
-            'keywords_cv': keywords_cv
+            'conhecimentos_tecnicos': f"{candidate_data['informacoes_profissionais']['conhecimentos_tecnicos']} {keywords_cv}"
         }
     except KeyError:
         return None
+
 
 # 🔎 Função de Similaridade
 def find_top_10_matches(vaga_description, data):
