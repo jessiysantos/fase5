@@ -16,8 +16,8 @@ stopwords_pt = stopwords.words('portuguese')
 # 📥 Carregamento dos Dados
 @st.cache_data
 def load_data_from_drive():
-    url = "https://drive.google.com/uc?id=1CHv4tvbiLRUbqLZGGMAQdLhelUy-tQI3"
-    # url = "https://raw.githubusercontent.com/jessiysantos/fase5/main/candidatos.csv"
+    # url = "https://drive.google.com/uc?id=1CHv4tvbiLRUbqLZGGMAQdLhelUy-tQI3"
+    url = "https://raw.githubusercontent.com/jessiysantos/fase5/main/candidatos.csv"
     output = "applicants.json"
     gdown.download(url, output, quiet=False)
     with open(output, 'r', encoding='utf-8') as f:
