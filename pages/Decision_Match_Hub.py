@@ -7,6 +7,7 @@ from deep_translator import GoogleTranslator
 from sentence_transformers import util
 import unicodedata
 import pandas as pd
+from io import BytesIO
 
 st.set_page_config(page_title="Decision Match Hub", layout="wide")
 st.image("img/Decision.png", width=100)
@@ -316,10 +317,30 @@ URL_APPLICANTS = "https://drive.google.com/uc?id=1lJ_CwRBrQf5RP-rP-vyU1efc8r7Cli
 URL_PROSPECTS  = "https://drive.google.com/uc?id=1I7PN2XeaETuBjcED8BDbC8mYKtEFsRHM"
 URL_VAGAS      = "https://drive.google.com/uc?id=1teqXm-T5shxF5_fjxaTCJIKnOp8LPmMR"
 
+ef download_drive_file(file_id):
+    URL = "https://drive.google.com/uc?export=download"
+    session = requests.Session()
+    response = session.get(URL, params={'id': file_id}, stream=True)
+
+    def get_confirm_token(response):
+        for key, value in response.cookies.items():
+            if key.startswith('download_warning'):
+                return value
+        return None
+
+    token = get_confirm_token(response)
+    if token:
+        params = {'id': file_id, 'confirm': token}
+        response = session.get(URL, params=params, stream=True)
+
+    return BytesIO(response.content)
+
 @st.cache_data
 def carregar_dados():
-    response = requests.get(URL_APPLICANTS)
-    data = json.loads(response.content.decode("utf-8"))
+    file_id = "1lJ_CwRBrQf5RP-rP-vyU1efc8r7Clixf"  # applicants.json
+    file_content = download_drive_file(file_id)
+    data = json.load(file_content)
+
     candidatos = []
     for item in data.values():
         infos = item.get("infos_basicas", {})
@@ -350,6 +371,7 @@ def carregar_dados():
             "nivel_espanhol": form.get("nivel_espanhol", "") or "Nenhum",
             "cv_pt": item.get("cv_pt", "") or "Nenhum"
         })
+
     df = pd.DataFrame(candidatos)
     df["idade"] = df["data_nascimento"].apply(calcular_idade)
     return df
