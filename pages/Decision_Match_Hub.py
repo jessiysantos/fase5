@@ -364,15 +364,11 @@ def load_jobs_data():
     response = requests.get(URL_VAGAS)
     return json.loads(response.content.decode("utf-8"))
 
-# Carregamento efetivo dos dados
-df_candidatos = carregar_dados()
-prospects_data = carregar_prospects()
-jobs_data = load_jobs_data()
-
 # ------------------- INICIALIZAÇÃO DE SESSÃO ------------------- #
-
+# Carregamento efetivo dos dados
 df = carregar_dados()
 prospects = carregar_prospects()
+jobs_data = load_jobs_data()
 
 total_sem_idade = df["idade"].isna().sum()
 
