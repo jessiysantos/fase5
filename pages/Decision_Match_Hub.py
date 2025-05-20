@@ -311,11 +311,15 @@ A IA compara esse conteúdo com a descrição da vaga e calcula uma similaridade
             st.session_state["card_index"] += 1
 
 # ------------------- CARREGAMENTO DE DADOS ------------------- #
+# URLs diretas dos arquivos no Google Drive
+URL_APPLICANTS = "https://drive.google.com/uc?id=1lJ_CwRBrQf5RP-rP-vyU1efc8r7Clixf"
+URL_PROSPECTS  = "https://drive.google.com/uc?id=1I7PN2XeaETuBjcED8BDbC8mYKtEFsRHM"
+URL_VAGAS      = "https://drive.google.com/uc?id=1teqXm-T5shxF5_fjxaTCJIKnOp8LPmMR"
 
 @st.cache_data
 def carregar_dados():
-    with open("dados/applicants.json", "r", encoding="utf-8") as f:
-        data = json.load(f)
+    response = requests.get(URL_APPLICANTS)
+    data = json.loads(response.content.decode("utf-8"))
     candidatos = []
     for item in data.values():
         infos = item.get("infos_basicas", {})
@@ -352,15 +356,17 @@ def carregar_dados():
 
 @st.cache_data
 def carregar_prospects():
-    with open("dados/prospects.json", "r", encoding="utf-8") as f:
-        return json.load(f)
-    
+    response = requests.get(URL_PROSPECTS)
+    return json.loads(response.content.decode("utf-8"))
+
 @st.cache_data
 def load_jobs_data():
-    import json
-    with open("dados/vagas.json", 'r', encoding='utf-8') as f:
-        return json.load(f)
+    response = requests.get(URL_VAGAS)
+    return json.loads(response.content.decode("utf-8"))
 
+# Carregamento efetivo dos dados
+df_candidatos = carregar_dados()
+prospects_data = carregar_prospects()
 jobs_data = load_jobs_data()
 
 # ------------------- INICIALIZAÇÃO DE SESSÃO ------------------- #
