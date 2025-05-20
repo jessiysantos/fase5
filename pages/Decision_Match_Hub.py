@@ -317,7 +317,7 @@ URL_APPLICANTS = "https://drive.google.com/uc?id=1lJ_CwRBrQf5RP-rP-vyU1efc8r7Cli
 URL_PROSPECTS  = "https://drive.google.com/uc?id=1I7PN2XeaETuBjcED8BDbC8mYKtEFsRHM"
 URL_VAGAS      = "https://drive.google.com/uc?id=1teqXm-T5shxF5_fjxaTCJIKnOp8LPmMR"
 
-ef download_drive_file(file_id):
+def download_drive_file(file_id):
     URL = "https://drive.google.com/uc?export=download"
     session = requests.Session()
     response = session.get(URL, params={'id': file_id}, stream=True)
