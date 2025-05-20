@@ -24,6 +24,7 @@ def normalize_text(text):
 def traduzir_para_portugues(texto):
     return GoogleTranslator(source='auto', target='pt').translate(texto)
 
+# Função auxiliar para calcular idade
 def calcular_idade(data):
     if not data:
         return None
@@ -31,10 +32,8 @@ def calcular_idade(data):
         try:
             nascimento = datetime.strptime(data.strip(), fmt)
             hoje = datetime.today()
-            idade = hoje.year - nascimento.year - ((hoje.month, hoje.day) < (nascimento.month, nascimento.day))
-            if 15 <= idade <= 90:
-                return idade
-        except Exception:
+            return hoje.year - nascimento.year - ((hoje.month, hoje.day) < (nascimento.month, nascimento.day))
+        except ValueError:
             continue
     return None
 
