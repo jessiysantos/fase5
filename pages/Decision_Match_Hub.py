@@ -1,5 +1,5 @@
 import streamlit as st
-import requests
+import gdown
 import json
 import pandas as pd
 from datetime import datetime
@@ -7,7 +7,6 @@ from deep_translator import GoogleTranslator
 from sentence_transformers import util
 import unicodedata
 import pandas as pd
-from io import BytesIO
 
 st.set_page_config(page_title="Decision Match Hub", layout="wide")
 st.image("img/Decision.png", width=100)
@@ -312,34 +311,15 @@ A IA compara esse conteúdo com a descrição da vaga e calcula uma similaridade
             st.session_state["card_index"] += 1
 
 # ------------------- CARREGAMENTO DE DADOS ------------------- #
-# URLs diretas dos arquivos no Google Drive
-URL_APPLICANTS = "https://drive.google.com/uc?id=1lJ_CwRBrQf5RP-rP-vyU1efc8r7Clixf"
-URL_PROSPECTS  = "https://drive.google.com/uc?id=1I7PN2XeaETuBjcED8BDbC8mYKtEFsRHM"
-URL_VAGAS      = "https://drive.google.com/uc?id=1teqXm-T5shxF5_fjxaTCJIKnOp8LPmMR"
-
-def download_drive_file(file_id):
-    URL = "https://drive.google.com/uc?export=download"
-    session = requests.Session()
-    response = session.get(URL, params={'id': file_id}, stream=True)
-
-    def get_confirm_token(response):
-        for key, value in response.cookies.items():
-            if key.startswith('download_warning'):
-                return value
-        return None
-
-    token = get_confirm_token(response)
-    if token:
-        params = {'id': file_id, 'confirm': token}
-        response = session.get(URL, params=params, stream=True)
-
-    return BytesIO(response.content)
 
 @st.cache_data
 def carregar_dados():
-    file_id = "1lJ_CwRBrQf5RP-rP-vyU1efc8r7Clixf"  # applicants.json
-    file_content = download_drive_file(file_id)
-    data = json.load(file_content)
+    url = "https://drive.google.com/uc?id=1lJ_CwRBrQf5RP-rP-vyU1efc8r7Clixf"
+    output = "applicants.json"
+    gdown.download(url, output, quiet=False)
+    
+    with open(output, 'r', encoding='utf-8') as f:
+        data = json.load(f)
 
     candidatos = []
     for item in data.values():
@@ -376,15 +356,25 @@ def carregar_dados():
     df["idade"] = df["data_nascimento"].apply(calcular_idade)
     return df
 
+
 @st.cache_data
 def carregar_prospects():
-    response = requests.get(URL_PROSPECTS)
-    return json.loads(response.content.decode("utf-8"))
+    url = "https://drive.google.com/uc?id=1I7PN2XeaETuBjcED8BDbC8mYKtEFsRHM"
+    output = "prospects.json"
+    gdown.download(url, output, quiet=False)
+    
+    with open(output, 'r', encoding='utf-8') as f:
+        return json.load(f)
+
 
 @st.cache_data
 def load_jobs_data():
-    response = requests.get(URL_VAGAS)
-    return json.loads(response.content.decode("utf-8"))
+    url = "https://drive.google.com/uc?id=1teqXm-T5shxF5_fjxaTCJIKnOp8LPmMR"
+    output = "vagas.json"
+    gdown.download(url, output, quiet=False)
+
+    with open(output, 'r', encoding='utf-8') as f:
+        return json.load(f)
 
 # ------------------- INICIALIZAÇÃO DE SESSÃO ------------------- #
 # Carregamento efetivo dos dados
