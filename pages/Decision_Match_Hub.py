@@ -314,6 +314,30 @@ A IA compara esse conteúdo com a descrição da vaga e calcula uma similaridade
     atual = st.session_state["card_index"] % total
     candidato = df_filtro.iloc[atual]
 
+    fatores = {
+        "Título Profissional": candidato["titulo_profissional"],
+        "Área de Atuação": candidato["area_atuacao"],
+        "Conhecimentos Técnicos": candidato["conhecimentos_tecnicos"],
+        "Faixa Salarial": candidato["remuneracao"]
+    }
+    
+    scores = {}
+    for chave, texto in fatores.items():
+        if chave == "Faixa Salarial":
+            try:
+                salario = float(str(texto).replace("R$", "").replace(".", "").replace(",", "."))
+                alvo = st.session_state.get("salario_alvo", None)
+                if alvo:
+                    score = max(0, 1 - abs(salario - alvo) / alvo)
+                else:
+                    score = 0
+            except:
+                score = 0
+        else:
+            texto = texto or ""
+            score = float(util.pytorch_cos_sim(st.session_state["vaga_emb"], model.encode(normalize_text(texto), convert_to_tensor=True))[0])
+        scores[chave] = score
+
     st.markdown("---")
     st.markdown(f"##### Candidato {atual+1} de {total}")
     st.markdown(f"### 👤 {candidato['nome']}")
