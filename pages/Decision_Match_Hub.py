@@ -26,17 +26,21 @@ def traduzir_para_portugues(texto):
     return GoogleTranslator(source='auto', target='pt').translate(texto)
 
 def calcular_idade(data):
-    if not data:
+    if not data or pd.isna(data) or str(data).strip() == "":
         return None
-    for fmt in ("%d-%m-%Y", "%d/%m/%Y"):
+    
+    formatos_possiveis = ["%d/%m/%Y", "%d-%m-%Y", "%Y-%m-%d"]
+    
+    for fmt in formatos_possiveis:
         try:
             nascimento = datetime.strptime(data.strip(), fmt)
             hoje = datetime.today()
             idade = hoje.year - nascimento.year - ((hoje.month, hoje.day) < (nascimento.month, nascimento.day))
             if 15 <= idade <= 90:
                 return idade
-        except Exception:
+        except ValueError:
             continue
+
     return None
 
 def avancar(pergunta, resposta, proxima_etapa):
@@ -325,12 +329,15 @@ def carregar_dados(limite=17384):
     # Lê o arquivo parquet
     df = pd.read_parquet(output)
 
-    # Garante que a coluna idade exista ou seja recalculada
-    if "idade" not in df.columns:
+    # Aplica sua função para calcular idade, com proteção para dados ausentes
+    if "data_nascimento" in df.columns:
+        df["data_nascimento"] = df["data_nascimento"].astype(str).str.strip()
         df["idade"] = df["data_nascimento"].apply(calcular_idade)
+    else:
+        df["idade"] = None
 
-    # Retorna somente os primeiros registros (para evitar lentidão)
-    return df.head(17384)
+    # Retorna somente os primeiros registros (para performance)
+    return df.head(limite)
 
 @st.cache_data
 def carregar_prospects():
