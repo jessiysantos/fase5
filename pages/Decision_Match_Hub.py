@@ -218,7 +218,7 @@ Você pode usar isso para entender, de forma transparente, por que cada candidat
     
     st.markdown("""
 <details>
-<summary style='font-size: 16px;'>🔎 O que significa <b>similaridade com a vaga</b>?</summary>
+<summary style='font-size: 16px;'>O que significa <b>similaridade com a vaga</b>?</summary>
 <div style='margin-top: 10px; font-size: 15px;'>
 
 Esse valor é gerado com base em <b>inteligência artificial</b>, considerando o <b>texto completo</b> do perfil do candidato.  
