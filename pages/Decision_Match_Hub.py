@@ -515,13 +515,13 @@ def carregar_dados_parquet():
 # ------------------- INICIALIZAÇÃO DE SESSÃO ------------------- #
 # Carregamento efetivo dos dados
 # Lê os 3 arquivos separadamente
-#part1 = pd.read_parquet("applicants_part1.parquet")
+part1 = pd.read_parquet("applicants_part1.parquet")
 #part2 = pd.read_parquet("applicants_part2.parquet")
 #part3 = pd.read_parquet("applicants_part3.parquet")
 
 # Junta tudo em um único DataFrame
 #df = pd.concat([part1, part2, part3], ignore_index=True)
-df = part1
+#df = part1
 prospects = carregar_prospects()
 jobs_data = load_jobs_data()
 
