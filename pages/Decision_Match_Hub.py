@@ -315,8 +315,8 @@ A IA compara esse conteúdo com a descrição da vaga e calcula uma similaridade
 
 @st.cache_data
 def carregar_dados():
-    url = "https://drive.google.com/uc?id=1lJ_CwRBrQf5RP-rP-vyU1efc8r7Clixf"
-    output = "applicants.json"
+    url = "https://drive.google.com/file/d/1iXajVRUWm5fEDGO3NqsbO3M8PIMO_RHn/view?usp=sharing"
+    output = "applicants.parquet"
     gdown.download(url, output, quiet=False)
     
     with open(output, 'r', encoding='utf-8') as f:
