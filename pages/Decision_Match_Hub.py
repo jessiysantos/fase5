@@ -248,6 +248,43 @@ A IA compara esse conteúdo com a descrição da vaga e calcula uma similaridade
     - 📍 Região predominante: **{st.session_state.df_filtro['estado'].mode()[0]}**
     """)
 
+    # Base para o gráfico: top 10 ranqueados
+    df_plot = st.session_state.df_filtro.head(10).copy()
+    df_plot["similaridade"] = df_plot["score_similaridade"] * 100
+    df_plot["candidato"] = df_plot["nome"]
+
+    fig_scatter = px.scatter(
+        df_plot,
+        x="similaridade",
+        y="candidato",
+        size="similaridade",
+        color="nivel_profissional",
+        labels={
+            "similaridade": "Similaridade com a Vaga (%)",
+            "nivel_profissional": "Nível Profissional",
+            "candidato": "Candidato"
+        },
+        hover_data=["cidade", "estado", "remuneracao"]
+    )
+
+    fig_scatter.update_layout(yaxis=dict(autorange="reversed"))  # para ordenar do mais aderente no topo
+    with st.expander("🎯 Top 10 Candidatos x Similaridade com a Vaga", expanded=False):
+        st.plotly_chart(fig_scatter, use_container_width=True)
+        
+    fig_bar = px.bar(
+        df_resultado,
+        x="📊 Score ponderado",
+        y="👤 Candidato",
+        orientation="h",
+        color="📊 Score ponderado",
+        color_continuous_scale="YlGnBu",
+        labels={"📊 Score ponderado": "Score %"}
+    )
+    fig_bar.update_layout(yaxis=dict(autorange="reversed"))  # Candidato 1 no topo
+    with st.expander("📈 Comparativo de Score Ponderado - Top 10", expanded=False):
+        st.plotly_chart(fig_bar, use_container_width=True)
+
+    
     # Filtro por nome com controle de loop
     st.markdown("### 🔎 Procurar candidato pelo nome")
     
