@@ -123,7 +123,7 @@ def mostrar_resultado():
             })
 
     st.success("✅ Candidatos ranqueados com sucesso! Veja os 10 mais aderentes abaixo.")
-    st.experimental_rerun()    
+    st.rerun()   
     if "vaga_emb" not in st.session_state:
         st.info("ℹ️ Para visualizar o ranking, primeiro ranqueie os candidatos com base na vaga.")
         return
