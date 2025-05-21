@@ -322,7 +322,7 @@ A IA compara esse conteúdo com a descrição da vaga e calcula uma similaridade
 # ------------------- CARREGAMENTO DE DADOS ------------------- #
 
 @st.cache_data
-def carregar_dados():
+def carregar_dados(limite_linhas=2000)::
     import gdown
     url = "https://drive.google.com/uc?id=1I0p5gDtBhq9LK6EZyheBlIuOIxnwU-Ns"
     output = "applicants.parquet"
@@ -333,6 +333,12 @@ def carregar_dados():
     if "idade" not in df.columns:
         df["idade"] = df["data_nascimento"].apply(calcular_idade)
 
+    # Aplica o limitador para performance
+    if len(df) > limite_linhas:
+        df = df.sample(n=limite_linhas, random_state=42).reset_index(drop=True)
+
+    return df
+    
     return df
 
 @st.cache_data
