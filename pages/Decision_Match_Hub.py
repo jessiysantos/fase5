@@ -475,7 +475,7 @@ with st.expander("🗣️ Ver histórico da conversa com a IA", expanded=True):
     st.markdown("</div>", unsafe_allow_html=True)  # fecha chat container
 
 # ------------------- ETAPA 21: SLIDER DE IDADE ------------------- #
-    if st.session_state.etapa == 21:
+elif st.session_state.etapa == 21:
         if "faixa_etaria_mensagem_enviada" not in st.session_state:
             st.session_state.mensagens.append({
                 "usuario": "assistant",
