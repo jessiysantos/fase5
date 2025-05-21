@@ -238,19 +238,26 @@ A IA compara esse conteúdo com a descrição da vaga e calcula uma similaridade
     #Visualizar Top 10 Dataframe
     st.dataframe(pd.DataFrame(top_10_exp), use_container_width=True)
 
-    # 🔍 Filtro por nome de candidato
+    # Filtro por nome com controle de loop
     st.markdown("### 🔎 Procurar candidato pelo nome")
+    
     nomes_disponiveis = st.session_state.df_filtro["nome"].dropna().unique().tolist()
+    nome_selecionado = st.selectbox(
+        "Selecione o nome do candidato:",
+        ["(Selecionar)"] + nomes_disponiveis,
+        index=0,
+        key="filtro_nome"
+    )
     
-    nome_selecionado = st.selectbox("Selecione o nome do candidato:", ["(Selecionar)"] + nomes_disponiveis, key="filtro_nome")
-    
-    if nome_selecionado != "(Selecionar)":
+    # Controla para não entrar em loop
+    if nome_selecionado != "(Selecionar)" and st.session_state.get("nome_filtrado") != nome_selecionado:
         indices = st.session_state.df_filtro.index[st.session_state.df_filtro["nome"] == nome_selecionado].tolist()
         if indices:
             st.session_state["card_index"] = indices[0]
-            st.rerun()                
+            st.session_state["nome_filtrado"] = nome_selecionado
+            st.rerun()         
 
-    # ② EXIBIÇÃO DO CANDIDATO
+    # EXIBIÇÃO DO CANDIDATO
     if "card_index" not in st.session_state:
         st.session_state["card_index"] = 0
 
