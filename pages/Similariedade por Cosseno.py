@@ -16,12 +16,13 @@ stopwords_pt = stopwords.words('portuguese')
 
 # 📥 Carregamento dos Dados
 @st.cache_data
-def load_data_from_drive():
-    url = "https://drive.google.com/uc?id=1CHv4tvbiLRUbqLZGGMAQdLhelUy-tQI3"
-    output = "applicants.json"
+def carregar_dados():
+    url = "https://drive.google.com/file/d/1iXajVRUWm5fEDGO3NqsbO3M8PIMO_RHn/view?usp=sharing"
+    output = "applicants.parquet"
     gdown.download(url, output, quiet=False)
+    
     with open(output, 'r', encoding='utf-8') as f:
-        return json.load(f)
+        data = json.load(f)
 
 data = load_data_from_drive()
 
