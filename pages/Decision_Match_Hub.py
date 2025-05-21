@@ -30,29 +30,19 @@ def traduzir_para_portugues(texto):
 def calcular_idade(data):
     if pd.isna(data):
         return None
-
-    # Se já for datetime (Timestamp), usa diretamente
     if isinstance(data, pd.Timestamp):
         nascimento = data
     else:
-        # Converte strings que eventualmente venham da base
-        data_str = str(data).strip()
-        formatos_possiveis = ["%d/%m/%Y", "%d-%m-%Y", "%Y-%m-%d"]
-        for fmt in formatos_possiveis:
-            try:
-                nascimento = datetime.strptime(data_str, fmt)
-                break
-            except ValueError:
-                continue
-        else:
-            return None  # nenhum formato bateu
+        try:
+            nascimento = pd.to_datetime(data, errors="coerce")
+            if pd.isna(nascimento):
+                return None
+        except:
+            return None
 
     hoje = datetime.today()
     idade = hoje.year - nascimento.year - ((hoje.month, hoje.day) < (nascimento.month, nascimento.day))
-    
-    if 15 <= idade <= 90:
-        return idade
-    return None
+    return idade if 15 <= idade <= 90 else None
 
 def avancar(pergunta, resposta, proxima_etapa):
     if resposta:
@@ -510,10 +500,22 @@ def load_jobs_data():
     with open(output, 'r', encoding='utf-8') as f:
         return json.load(f)
 
+@st.cache_data
+def carregar_dados_parquet():
+    df = pd.read_parquet("applicants_part1.parquet")
+
+    # Garante que a coluna está em datetime (caso não esteja)
+    df["data_nascimento"] = pd.to_datetime(df["data_nascimento"], errors="coerce")
+
+    # Aplica a função de idade
+    df["idade"] = df["data_nascimento"].apply(calcular_idade)
+
+    return df
+
 # ------------------- INICIALIZAÇÃO DE SESSÃO ------------------- #
 # Carregamento efetivo dos dados
 # Lê os 3 arquivos separadamente
-part1 = pd.read_parquet("applicants_part1.parquet")
+#part1 = pd.read_parquet("applicants_part1.parquet")
 #part2 = pd.read_parquet("applicants_part2.parquet")
 #part3 = pd.read_parquet("applicants_part3.parquet")
 
