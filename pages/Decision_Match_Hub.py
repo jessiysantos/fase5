@@ -237,7 +237,7 @@ A IA compara esse conteúdo com a descrição da vaga e calcula uma similaridade
 
     #Visualizar Top 10 Dataframe
     # Cria DataFrame
-    st.dataframe(df_resultado)
+    df_resultado = pd.DataFrame(top_10_exp)
     
     # Colunas com percentuais para aplicar heatmap
     colunas_heatmap = [
