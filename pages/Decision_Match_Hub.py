@@ -28,21 +28,30 @@ def traduzir_para_portugues(texto):
     return GoogleTranslator(source='auto', target='pt').translate(texto)
 
 def calcular_idade(data):
-    if not data or pd.isna(data) or str(data).strip() == "":
+    if pd.isna(data):
         return None
-    
-    formatos_possiveis = ["%d/%m/%Y", "%d-%m-%Y", "%Y-%m-%d"]
-    
-    for fmt in formatos_possiveis:
-        try:
-            nascimento = datetime.strptime(data.strip(), fmt)
-            hoje = datetime.today()
-            idade = hoje.year - nascimento.year - ((hoje.month, hoje.day) < (nascimento.month, nascimento.day))
-            if 15 <= idade <= 90:
-                return idade
-        except ValueError:
-            continue
 
+    # Se já for datetime (Timestamp), usa diretamente
+    if isinstance(data, pd.Timestamp):
+        nascimento = data
+    else:
+        # Converte strings que eventualmente venham da base
+        data_str = str(data).strip()
+        formatos_possiveis = ["%d/%m/%Y", "%d-%m-%Y", "%Y-%m-%d"]
+        for fmt in formatos_possiveis:
+            try:
+                nascimento = datetime.strptime(data_str, fmt)
+                break
+            except ValueError:
+                continue
+        else:
+            return None  # nenhum formato bateu
+
+    hoje = datetime.today()
+    idade = hoje.year - nascimento.year - ((hoje.month, hoje.day) < (nascimento.month, nascimento.day))
+    
+    if 15 <= idade <= 90:
+        return idade
     return None
 
 def avancar(pergunta, resposta, proxima_etapa):
