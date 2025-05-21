@@ -251,11 +251,10 @@ A IA compara esse conteúdo com a descrição da vaga e calcula uma similaridade
         df_resultado[col] = df_resultado[col].str.replace("%", "").astype(float)
     
     # Aplica heatmap com estilo
-    st.dataframe(
+    st.write(
         df_resultado.style
             .background_gradient(cmap="YlGnBu", subset=colunas_heatmap)
-            .format("{:.0f}%", subset=colunas_heatmap + ["📊 Score ponderado"]),
-        use_container_width=True
+            .format("{:.0f}%", subset=colunas_heatmap + ["📊 Score ponderado"])
     )
 
 
