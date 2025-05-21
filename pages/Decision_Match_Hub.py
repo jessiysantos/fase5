@@ -309,11 +309,14 @@ A IA compara esse conteúdo com a descrição da vaga e calcula uma similaridade
     # ④ NAVEGAÇÃO ENTRE CANDIDATOS
     col_nav1, col_nav2 = st.columns(2)
     with col_nav1:
-        if st.button("⬅️ Anterior"):
-            st.session_state["card_index"] -= 1
+        if st.button("⬅️ Anterior", key="botao_anterior"):
+            st.session_state["card_index"] = max(0, st.session_state["card_index"] - 1)
+            st.rerun()
+
     with col_nav2:
-        if st.button("Próximo ➡️"):
-            st.session_state["card_index"] += 1
+        if st.button("Próximo ➡️", key="botao_proximo"):
+            st.session_state["card_index"] = min(total - 1, st.session_state["card_index"] + 1)
+            st.rerun()
 
 # ------------------- CARREGAMENTO DE DADOS ------------------- #
 
@@ -492,9 +495,8 @@ with st.expander("🗣️ Ver histórico da conversa com a IA", expanded=True):
             st.rerun()
     
         idade_validas = pd.to_numeric(st.session_state.df_filtro["idade"], errors="coerce").dropna()
-        st.markdown(idade_validas)
+
         if not idade_validas.empty:
-            st.markdown("entrou")
             idade_min, idade_max = int(idade_validas.min()), int(idade_validas.max())
             idade_range = st.slider(
                 "Selecione a faixa de idade dos candidatos que deseja considerar:",
