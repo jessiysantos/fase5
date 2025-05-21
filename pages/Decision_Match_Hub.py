@@ -285,6 +285,7 @@ A IA compara esse conteúdo com a descrição da vaga e calcula uma similaridade
     with st.expander("📈 Comparativo de Score Ponderado - Top 10", expanded=False):
         st.plotly_chart(fig_bar, use_container_width=True)
 
+    st.divider()    
     
     # Filtro por nome com controle de loop
     st.markdown("### 🔎 Procurar candidato pelo nome")
