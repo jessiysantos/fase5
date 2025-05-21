@@ -504,18 +504,28 @@ def load_jobs_data():
 def carregar_dados_parquet():
     df = pd.read_parquet("applicants_part1.parquet")
 
-    # Garante que a coluna está em datetime (caso não esteja)
+    # Converte e calcula idade
     df["data_nascimento"] = pd.to_datetime(df["data_nascimento"], errors="coerce")
-
-    # Aplica a função de idade
     df["idade"] = df["data_nascimento"].apply(calcular_idade)
+
+    # Ajuste campos padrão que podem estar ausentes
+    for campo in [
+        "nome", "email", "cidade", "estado", "objetivo_profissional",
+        "pcd", "titulo_profissional", "area_atuacao", "conhecimentos_tecnicos",
+        "nivel_profissional", "remuneracao", "nivel_academico", "nivel_ingles",
+        "nivel_espanhol", "cv_pt"
+    ]:
+        if campo not in df.columns:
+            df[campo] = "Nenhum"
+
+    df["pcd"] = df["pcd"].apply(lambda x: 1 if str(x).strip().lower() == "sim" else 0)
 
     return df
 
 # ------------------- INICIALIZAÇÃO DE SESSÃO ------------------- #
 # Carregamento efetivo dos dados
 # Lê os 3 arquivos separadamente
-part1 = pd.read_parquet("applicants_part1.parquet")
+#part1 = pd.read_parquet("applicants_part1.parquet")
 #part2 = pd.read_parquet("applicants_part2.parquet")
 #part3 = pd.read_parquet("applicants_part3.parquet")
 
