@@ -315,51 +315,22 @@ A IA compara esse conteúdo com a descrição da vaga e calcula uma similaridade
 
 @st.cache_data
 def carregar_dados(limite=1000):
-    url = "https://drive.google.com/uc?id=1lJ_CwRBrQf5RP-rP-vyU1efc8r7Clixf"
-    output = "applicants.json"
+    # Link do arquivo .parquet no Google Drive
+    url = "https://drive.google.com/uc?id=1I0p5gDtBhq9LK6EZyheBlIuOIxnwU-Ns"
+    output = "applicants.parquet"
+    
+    # Faz o download do arquivo do Drive
     gdown.download(url, output, quiet=False)
 
-    with open(output, 'r', encoding='utf-8') as f:
-        data = json.load(f)
+    # Lê o arquivo parquet
+    df = pd.read_parquet(output)
 
-    candidatos = []
-    for i, item in enumerate(data.values()):
-        if i >= limite:
-            break  # Limita a quantidade de registros
-        infos = item.get("infos_basicas", {})
-        pessoais = item.get("informacoes_pessoais", {})
-        prof = item.get("informacoes_profissionais", {})
-        form = item.get("formacao_e_idiomas", {})
-        local = infos.get("local", "Nenhum")
-        cidade, estado = "Nenhum", "Nenhum"
-        if "," in local:
-            partes = [p.strip() for p in local.split(",")]
-            if len(partes) >= 2:
-                cidade, estado = partes[0], partes[1]
-        candidatos.append({
-            "nome": infos.get("nome", "") or "Nenhum",
-            "email": infos.get("email", "") or "Nenhum",
-            "cidade": cidade,
-            "estado": estado,
-            "objetivo_profissional": infos.get("objetivo_profissional", "") or "Nenhum",
-            "data_nascimento": pessoais.get("data_nascimento", ""),
-            "pcd": 1 if pessoais.get("pcd", "").strip().lower() == "sim" else 0,
-            "titulo_profissional": prof.get("titulo_profissional", "") or "Nenhum",
-            "area_atuacao": prof.get("area_atuacao", "") or "Nenhum",
-            "conhecimentos_tecnicos": prof.get("conhecimentos_tecnicos", "") or "Nenhum",
-            "nivel_profissional": prof.get("nivel_profissional", "") or "Nenhum",
-            "remuneracao": prof.get("remuneracao", "") or "Nenhum",
-            "nivel_academico": form.get("nivel_academico", "") or "Nenhum",
-            "nivel_ingles": form.get("nivel_ingles", "") or "Nenhum",
-            "nivel_espanhol": form.get("nivel_espanhol", "") or "Nenhum",
-            "cv_pt": item.get("cv_pt", "") or "Nenhum"
-        })
+    # Garante que a coluna idade exista ou seja recalculada
+    if "idade" not in df.columns:
+        df["idade"] = df["data_nascimento"].apply(calcular_idade)
 
-    df = pd.DataFrame(candidatos)
-    df["idade"] = df["data_nascimento"].apply(calcular_idade)
-    return df
-
-
+    # Retorna somente os primeiros registros (para evitar lentidão)
+    return df.head(limite)
 
 @st.cache_data
 def carregar_prospects():
