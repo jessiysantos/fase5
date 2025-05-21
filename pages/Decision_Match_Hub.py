@@ -116,9 +116,9 @@ def mostrar_resultado():
 
                 st.session_state.df_filtro = df_filtro
                 st.session_state["card_index"] = 0
-                st.success("✅ Candidatos ranqueados com sucesso! Veja os 10 mais aderentes abaixo.")
                 st.session_state["vaga_emb"] = vaga_emb
-                #st.rerun()
+                st.success("✅ Candidatos ranqueados com sucesso! Veja os 10 mais aderentes abaixo.")
+                st.experimental_rerun()  # Força atualização segura da tela
     if "vaga_emb" not in st.session_state:
         st.info("ℹ️ Para visualizar o ranking, primeiro ranqueie os candidatos com base na vaga.")
         return
