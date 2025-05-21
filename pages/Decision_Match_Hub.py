@@ -237,7 +237,7 @@ A IA compara esse conteúdo com a descrição da vaga e calcula uma similaridade
 
     #Visualizar Top 10 Dataframe
     # Cria DataFrame
-    df_resultado = pd.DataFrame(top_10_exp)
+    st.dataframe(df_resultado)
     
     # Colunas com percentuais para aplicar heatmap
     colunas_heatmap = [
@@ -253,10 +253,12 @@ A IA compara esse conteúdo com a descrição da vaga e calcula uma similaridade
         df_resultado[col] = df_resultado[col].str.replace("%", "").astype(float)
     
     # Aplica estilo com heatmap
-    st.write(
+    st.markdown(
         df_resultado.style
-            .background_gradient(cmap="YlGnBu", subset=colunas_heatmap[:-1])  # heatmap nas 4 colunas principais
-            .format("{:.0f}%", subset=colunas_heatmap)  # exibe tudo como %
+            .background_gradient(cmap="YlGnBu", subset=colunas_heatmap[:-1])
+            .format("{:.0f}%", subset=colunas_heatmap)
+            .to_html(),
+        unsafe_allow_html=True
     )
 
 
