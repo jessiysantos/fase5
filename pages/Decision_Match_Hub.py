@@ -475,31 +475,31 @@ with st.expander("🗣️ Ver histórico da conversa com a IA", expanded=True):
     st.markdown("</div>", unsafe_allow_html=True)  # fecha chat container
 
 # ------------------- ETAPA 21: SLIDER DE IDADE ------------------- #
-if st.session_state.etapa == 21:
-    if "faixa_etaria_mensagem_enviada" not in st.session_state:
-        st.session_state.mensagens.append({
-            "usuario": "assistant",
-            "texto": "Agora me diga, qual faixa etária você gostaria de considerar?"
-        })
-        st.session_state.faixa_etaria_mensagem_enviada = True
-        st.rerun()
-
-    idade_validas = pd.to_numeric(st.session_state.df_filtro["idade"], errors="coerce").dropna()
-    if not idade_validas.empty:
-        idade_min, idade_max = int(idade_validas.min()), int(idade_validas.max())
-        idade_range = st.slider(
-            "Selecione a faixa de idade dos candidatos que deseja considerar:",
-            min_value=idade_min,
-            max_value=idade_max,
-            value=(idade_min, idade_max),
-            key="faixa_idade"
-        )
-        if st.button("Aplicar faixa etária"):
-            df_filtro = st.session_state.df_filtro
-            df_filtro = df_filtro[df_filtro["idade"].between(*idade_range)]
-            st.session_state.df_filtro = df_filtro
-            st.session_state.resumo.append(f"🔹 Idade entre {idade_range[0]} e {idade_range[1]} anos")
-            avancar("Quer focar em alguma região específica do Brasil?", f"{idade_range[0]}-{idade_range[1]}", 3)
+    if st.session_state.etapa == 21:
+        if "faixa_etaria_mensagem_enviada" not in st.session_state:
+            st.session_state.mensagens.append({
+                "usuario": "assistant",
+                "texto": "Agora me diga, qual faixa etária você gostaria de considerar?"
+            })
+            st.session_state.faixa_etaria_mensagem_enviada = True
+            st.rerun()
+    
+        idade_validas = pd.to_numeric(st.session_state.df_filtro["idade"], errors="coerce").dropna()
+        if not idade_validas.empty:
+            idade_min, idade_max = int(idade_validas.min()), int(idade_validas.max())
+            idade_range = st.slider(
+                "Selecione a faixa de idade dos candidatos que deseja considerar:",
+                min_value=idade_min,
+                max_value=idade_max,
+                value=(idade_min, idade_max),
+                key="faixa_idade"
+            )
+            if st.button("Aplicar faixa etária"):
+                df_filtro = st.session_state.df_filtro
+                df_filtro = df_filtro[df_filtro["idade"].between(*idade_range)]
+                st.session_state.df_filtro = df_filtro
+                st.session_state.resumo.append(f"🔹 Idade entre {idade_range[0]} e {idade_range[1]} anos")
+                avancar("Quer focar em alguma região específica do Brasil?", f"{idade_range[0]}-{idade_range[1]}", 3)
 
 
 # ------------------- ETAPA 31: CAMPOS DE ESTADO E CIDADE ------------------- #
