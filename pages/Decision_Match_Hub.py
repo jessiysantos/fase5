@@ -485,6 +485,7 @@ if st.session_state.etapa == 21:
         st.rerun()
 
     idade_validas = pd.to_numeric(st.session_state.df_filtro["idade"], errors="coerce").dropna()
+    st.markdown(idade_validas)
     if not idade_validas.empty:
         st.markdown("entrou")
         idade_min, idade_max = int(idade_validas.min()), int(idade_validas.max())
