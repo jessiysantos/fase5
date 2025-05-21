@@ -314,16 +314,18 @@ A IA compara esse conteúdo com a descrição da vaga e calcula uma similaridade
 # ------------------- CARREGAMENTO DE DADOS ------------------- #
 
 @st.cache_data
-def carregar_dados():
+def carregar_dados(limite=1000):
     url = "https://drive.google.com/uc?id=1lJ_CwRBrQf5RP-rP-vyU1efc8r7Clixf"
     output = "applicants.json"
     gdown.download(url, output, quiet=False)
-    
+
     with open(output, 'r', encoding='utf-8') as f:
         data = json.load(f)
 
     candidatos = []
-    for item in data.values():
+    for i, item in enumerate(data.values()):
+        if i >= limite:
+            break  # Limita a quantidade de registros
         infos = item.get("infos_basicas", {})
         pessoais = item.get("informacoes_pessoais", {})
         prof = item.get("informacoes_profissionais", {})
@@ -356,6 +358,7 @@ def carregar_dados():
     df = pd.DataFrame(candidatos)
     df["idade"] = df["data_nascimento"].apply(calcular_idade)
     return df
+
 
 
 @st.cache_data
