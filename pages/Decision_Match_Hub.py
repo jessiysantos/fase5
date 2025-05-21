@@ -236,8 +236,7 @@ A IA compara esse conteúdo com a descrição da vaga e calcula uma similaridade
     st.markdown(f"<div style='font-size: 12px; color: #888;'>ℹ️ <b>Nota:</b> Se algum fator aparece com 0%, isso indica que o candidato não informou esse dado ou que o conteúdo está distante do perfil da vaga e teve baixa similaridade.</div></b><br></div>", unsafe_allow_html=True)
 
     #Visualizar Top 10 Dataframe
-    # Cria DataFrame
-    df_resultado = pd.DataFrame(top_10_exp)
+    st.dataframe(pd.DataFrame(top_10_exp), use_container_width=True)
     
     # Colunas com percentuais para aplicar heatmap
     colunas_heatmap = [
