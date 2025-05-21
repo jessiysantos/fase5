@@ -314,7 +314,7 @@ A IA compara esse conteúdo com a descrição da vaga e calcula uma similaridade
 # ------------------- CARREGAMENTO DE DADOS ------------------- #
 
 @st.cache_data
-def carregar_dados(limite=5400):
+def carregar_dados(limite=17384):
     # Link do arquivo .parquet no Google Drive
     url = "https://drive.google.com/uc?id=1I0p5gDtBhq9LK6EZyheBlIuOIxnwU-Ns"
     output = "applicants.parquet"
@@ -330,7 +330,7 @@ def carregar_dados(limite=5400):
         df["idade"] = df["data_nascimento"].apply(calcular_idade)
 
     # Retorna somente os primeiros registros (para evitar lentidão)
-    return df.head(5000)
+    return df.head(17384)
 
 @st.cache_data
 def carregar_prospects():
