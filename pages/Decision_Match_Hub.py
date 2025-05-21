@@ -7,6 +7,8 @@ from deep_translator import GoogleTranslator
 from sentence_transformers import util
 import unicodedata
 import pandas as pd
+import plotly.graph_objects as go
+import plotly.express as px
 
 st.set_page_config(page_title="Decision Match Hub", layout="wide")
 st.image("img/Decision.png", width=100)
@@ -276,7 +278,79 @@ A IA compara esse conteúdo com a descrição da vaga e calcula uma similaridade
     st.markdown("---")
     st.markdown(f"##### Candidato {atual+1} de {total}")
     st.markdown(f"### 👤 {candidato['nome']}")
+    # Layout lateral
+    col_esq, col_dir = st.columns([3, 2])  # Coluna esquerda maior para as infos
 
+    with col_esq:
+        if "score_similaridade" in candidato:
+            st.markdown(f"**⭐ Similaridade com a vaga:** `{candidato['score_similaridade']:.2f}`")
+        st.write(f"📧 Email: {candidato['email']}")
+        st.write(f"🎯 Objetivo: {candidato['objetivo_profissional']}")
+        st.write(f"🎓 Formação: {candidato['nivel_academico']}")
+        st.write(f"💬 Inglês: {candidato['nivel_ingles']} | Espanhol: {candidato['nivel_espanhol']}")
+        st.write(f"💼 Título: {candidato['titulo_profissional']}")
+        st.write(f"📈 Nível: {candidato['nivel_profissional']}")
+        st.write(f"📍 Local: {candidato['cidade']}, {candidato['estado']}")
+
+    with col_dir:
+        #st.markdown("<div style='text-align:center; font-weight:600'>📊 Aderência por Fator</div>", unsafe_allow_html=True)
+        st.markdown("📊 **Aderência por Fator**")
+        # Radar Chart com legenda visível e menor tamanho
+        fatores_radar = ["🎓 Título", "🧭 Área", "💻 Técnicos", "💰 Faixa Salarial"]
+        valores_candidato = [
+            scores["Título Profissional"],
+            scores["Área de Atuação"],
+            scores["Conhecimentos Técnicos"],
+            scores["Faixa Salarial"]
+        ]
+        valores_ideais = [1.0] * len(fatores_radar)
+
+        fig_radar = go.Figure()
+
+        fig_radar.add_trace(go.Scatterpolar(
+            r=valores_candidato,
+            theta=fatores_radar,
+            fill='toself',
+            name="Candidato",
+            line=dict(color="#4626C0")
+        ))
+
+        fig_radar.add_trace(go.Scatterpolar(
+            r=valores_ideais,
+            theta=fatores_radar,
+            fill='toself',
+            name="Perfil Ideal",
+            line=dict(color="#00AEEF", dash="dash")
+        ))
+
+        fig_radar.update_layout(
+            polar=dict(
+                radialaxis=dict(
+                    visible=True,
+                    range=[0, 1],
+                    tickvals=[0.25, 0.5, 0.75, 1],
+                    ticktext=["25%", "50%", "75%", "100%"]
+                )
+            ),
+            width=350,
+            height=320,
+            showlegend=True,
+            margin=dict(t=30, l=40, r=40, b=40),  # ⬅️ margens mais generosas para evitar cortes
+            legend=dict(
+                orientation="h",
+                yanchor="bottom",
+                y=-0.3,
+                xanchor="center",
+                x=0.5,
+                font=dict(size=11)
+            
+            )
+        )
+
+        st.plotly_chart(fig_radar, use_container_width=True)
+
+    
+    
     if "score_similaridade" in candidato:
         st.markdown(f"**⭐ Similaridade com a vaga:** `{candidato['score_similaridade']:.2f}`")
 
