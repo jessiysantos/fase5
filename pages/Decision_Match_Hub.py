@@ -510,7 +510,7 @@ part1 = pd.read_parquet("applicants_part1.parquet")
 
 # Junta tudo em um único DataFrame
 #df = pd.concat([part1, part2, part3], ignore_index=True)
-df = pd.concat([part1], ignore_index=True)
+df = part1
 prospects = carregar_prospects()
 jobs_data = load_jobs_data()
 
