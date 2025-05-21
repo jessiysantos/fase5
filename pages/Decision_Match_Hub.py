@@ -484,7 +484,8 @@ with st.expander("🗣️ Ver histórico da conversa com a IA", expanded=True):
             st.session_state.faixa_etaria_mensagem_enviada = True  # evita repetir
             st.rerun() 
         
-        idade_validas = st.session_state.df_filtro["idade"].dropna()
+        idade_validas = pd.to_numeric(st.session_state.df_filtro["idade"], errors="coerce").dropna()
+
         if not idade_validas.empty:
             idade_min, idade_max = int(idade_validas.min()), int(idade_validas.max())
             idade_range = st.slider(
