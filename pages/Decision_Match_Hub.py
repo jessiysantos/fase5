@@ -474,7 +474,7 @@ with st.expander("🗣️ Ver histórico da conversa com a IA", expanded=True):
 
     st.markdown("</div>", unsafe_allow_html=True)  # fecha chat container
 
-    # ------------------- ETAPA 21: SLIDER DENTRO DO EXPANDER ------------------- #
+    # ------------------- ETAPA 21: SLIDER DE IDADE ------------------- #
     if st.session_state.etapa == 21:
         if "faixa_etaria_mensagem_enviada" not in st.session_state:
             st.session_state.mensagens.append({
@@ -484,8 +484,8 @@ with st.expander("🗣️ Ver histórico da conversa com a IA", expanded=True):
             st.session_state.faixa_etaria_mensagem_enviada = True  # evita repetir
             st.rerun() 
         
-        idade_validas = pd.to_numeric(st.session_state.df_filtro["idade"], errors="coerce").dropna()
-
+        idade_validas = st.session_state.df_filtro["idade"].dropna()
+        
         if not idade_validas.empty:
             idade_min, idade_max = int(idade_validas.min()), int(idade_validas.max())
             idade_range = st.slider(
