@@ -314,23 +314,18 @@ A IA compara esse conteúdo com a descrição da vaga e calcula uma similaridade
 # ------------------- CARREGAMENTO DE DADOS ------------------- #
 
 @st.cache_data
-def carregar_dados(limite=1000):
-    # Link do arquivo .parquet no Google Drive
+def carregar_dados():
+    import gdown
     url = "https://drive.google.com/uc?id=1I0p5gDtBhq9LK6EZyheBlIuOIxnwU-Ns"
     output = "applicants.parquet"
     
-    # Faz o download do arquivo do Drive
     gdown.download(url, output, quiet=False)
-
-    # Lê o arquivo parquet
     df = pd.read_parquet(output)
 
-    # Garante que a coluna idade exista ou seja recalculada
     if "idade" not in df.columns:
         df["idade"] = df["data_nascimento"].apply(calcular_idade)
 
-    # Retorna somente os primeiros registros (para evitar lentidão)
-    return df.head(limite)
+    return df
 
 @st.cache_data
 def carregar_prospects():
