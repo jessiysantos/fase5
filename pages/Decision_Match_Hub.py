@@ -237,6 +237,14 @@ A IA compara esse conteúdo com a descrição da vaga e calcula uma similaridade
 
     #Visualizar Top 10 Dataframe
     st.dataframe(pd.DataFrame(top_10_exp), use_container_width=True)
+    
+    st.markdown("#### Resumo Inteligente")
+    st.info(f"""
+    - 🔟 Exibindo os 10 mais aderentes entre {len(st.session_state.df_filtro)} candidatos filtrados.
+    - 🎓 Média de similaridade (IA): **{round(st.session_state.df_filtro['score_similaridade'].mean()*100)}%**
+    - 💰 Faixa salarial mais comum: **{st.session_state.df_filtro['remuneracao'].mode()[0]}**
+    - 📍 Região predominante: **{st.session_state.df_filtro['estado'].mode()[0]}**
+    """)
 
     # Filtro por nome com controle de loop
     st.markdown("### 🔎 Procurar candidato pelo nome")
