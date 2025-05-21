@@ -314,7 +314,7 @@ A IA compara esse conteúdo com a descrição da vaga e calcula uma similaridade
 # ------------------- CARREGAMENTO DE DADOS ------------------- #
 
 @st.cache_data
-def carregar_dados(limite=1000):
+def carregar_dados(limite=2000):
     # Link do arquivo .parquet no Google Drive
     url = "https://drive.google.com/uc?id=1I0p5gDtBhq9LK6EZyheBlIuOIxnwU-Ns"
     output = "applicants.parquet"
