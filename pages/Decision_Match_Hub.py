@@ -236,7 +236,28 @@ A IA compara esse conteúdo com a descrição da vaga e calcula uma similaridade
     st.markdown(f"<div style='font-size: 12px; color: #888;'>ℹ️ <b>Nota:</b> Se algum fator aparece com 0%, isso indica que o candidato não informou esse dado ou que o conteúdo está distante do perfil da vaga e teve baixa similaridade.</div></b><br></div>", unsafe_allow_html=True)
 
     #Visualizar Top 10 Dataframe
-    st.dataframe(pd.DataFrame(top_10_exp), use_container_width=True)
+    # Cria DataFrame
+    df_resultado = pd.DataFrame(top_10_exp)
+    
+    # Remove símbolo de % para aplicar coloração numérica
+    colunas_heatmap = [
+        "🎓 Título (40%)",
+        "🧭 Área (25%)",
+        "💻 Técnicos (25%)",
+        "💰 Faixa Salarial (10%)"
+    ]
+    
+    for col in colunas_heatmap:
+        df_resultado[col] = df_resultado[col].str.replace("%", "").astype(float)
+    
+    # Aplica heatmap com estilo
+    st.dataframe(
+        df_resultado.style
+            .background_gradient(cmap="YlGnBu", subset=colunas_heatmap)
+            .format("{:.0f}%", subset=colunas_heatmap + ["📊 Score ponderado"]),
+        use_container_width=True
+    )
+
 
     # Filtro por nome com controle de loop
     st.markdown("### 🔎 Procurar candidato pelo nome")
