@@ -98,27 +98,32 @@ def mostrar_resultado():
             if not descricao_vaga.strip():
                 st.warning("⚠️ Descrição da vaga está vazia.")
                 st.stop()
-            else:
+        
+            descricoes_candidatos = df_filtro.apply(lambda row: f"""
+                Título Profissional: {row['titulo_profissional']}
+                Área de Atuação: {row['area_atuacao']}
+                Conhecimentos Técnicos: {row['conhecimentos_tecnicos']}
+                Faixa Salarial: {row['remuneracao']}
+            """, axis=1)
+        
+            vaga_emb = model.encode(normalize_text(descricao_vaga), convert_to_tensor=True)
+            candidatos_emb = model.encode(
+                [normalize_text(d) for d in descricoes_candidatos],
+                convert_to_tensor=True
+            )
+            similaridades = util.pytorch_cos_sim(vaga_emb, candidatos_emb)[0].cpu().numpy()
+        
+            df_filtro["score_similaridade"] = similaridades
+            df_filtro = df_filtro.sort_values("score_similaridade", ascending=False).reset_index(drop=True)
+        
+            st.session_state.update({
+                "df_filtro": df_filtro,
+                "card_index": 0,
+                "vaga_emb": vaga_emb
+            })
 
-                descricoes_candidatos = df_filtro.apply(lambda row: f"""
-                    Título Profissional: {row['titulo_profissional']}
-                    Área de Atuação: {row['area_atuacao']}
-                    Conhecimentos Técnicos: {row['conhecimentos_tecnicos']}
-                    Faixa Salarial: {row['remuneracao']}
-                """, axis=1)
-
-                vaga_emb = model.encode(normalize_text(descricao_vaga), convert_to_tensor=True)
-                candidatos_emb = model.encode([normalize_text(d) for d in descricoes_candidatos], convert_to_tensor=True)
-                similaridades = util.pytorch_cos_sim(vaga_emb, candidatos_emb)[0].cpu().numpy()
-
-                df_filtro["score_similaridade"] = similaridades
-                df_filtro = df_filtro.sort_values("score_similaridade", ascending=False).reset_index(drop=True)
-
-                st.session_state.df_filtro = df_filtro
-                st.session_state["card_index"] = 0
-                st.session_state["vaga_emb"] = vaga_emb
-                st.success("✅ Candidatos ranqueados com sucesso! Veja os 10 mais aderentes abaixo.")
-                st.experimental_rerun()  # Força atualização segura da tela
+    st.success("✅ Candidatos ranqueados com sucesso! Veja os 10 mais aderentes abaixo.")
+    st.experimental_rerun()    
     if "vaga_emb" not in st.session_state:
         st.info("ℹ️ Para visualizar o ranking, primeiro ranqueie os candidatos com base na vaga.")
         return
@@ -175,6 +180,9 @@ def mostrar_resultado():
                     score = 0
             else:
                 texto = texto or ""
+                if "vaga_emb" not in st.session_state:
+                    st.warning("⚠️ Descrição da vaga não foi informada. Ranqueie os candidatos antes.")
+                    st.stop()
                 score = float(util.pytorch_cos_sim(vaga_emb, model.encode(normalize_text(texto), convert_to_tensor=True))[0])
             scores[chave] = score
             total_score += score * WEIGHTS[chave]
@@ -480,7 +488,12 @@ with st.expander("🗣️ Ver histórico da conversa com a IA", expanded=True):
             st.rerun() 
         
         idade_validas = st.session_state.df_filtro["idade"].dropna()
-        if not idade_validas.empty:
+        
+        if idade_validas.empty:
+            st.warning("⚠️ Não há idades válidas disponíveis para aplicar faixa etária.")
+            st.session_state.etapa = 3
+            st.rerun()
+        else:
             idade_min, idade_max = int(idade_validas.min()), int(idade_validas.max())
             idade_range = st.slider(
                 "Selecione a faixa de idade dos candidatos que deseja considerar:",
@@ -489,11 +502,18 @@ with st.expander("🗣️ Ver histórico da conversa com a IA", expanded=True):
                 value=(idade_min, idade_max),
                 key="faixa_idade"
             )
+        
             if st.button("Aplicar faixa etária"):
                 df_filtro = st.session_state.df_filtro
                 df_filtro = df_filtro[df_filtro["idade"].between(*idade_range)]
-                st.session_state.df_filtro = df_filtro
+        
+                st.session_state.update({
+                    "df_filtro": df_filtro,
+                    "etapa": 3
+                })
                 st.session_state.resumo.append(f"🔹 Idade entre {idade_range[0]} e {idade_range[1]} anos")
+                st.session_state.mensagens.append({"usuario": "user", "texto": f"Entre {idade_range[0]} e {idade_range[1]} anos."})
+                st.experimental_rerun()
                 avancar("Quer focar em alguma região específica do Brasil?", f"{idade_range[0]}-{idade_range[1]}", 3)
 
 # ------------------- ETAPA 31: CAMPOS DE ESTADO E CIDADE ------------------- #
