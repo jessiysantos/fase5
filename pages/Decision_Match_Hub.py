@@ -362,28 +362,6 @@ A IA compara esse conteúdo com a descrição da vaga e calcula uma similaridade
 # ------------------- CARREGAMENTO DE DADOS ------------------- #
 
 @st.cache_data
-def carregar_dados(limite=17384):
-    # Link do arquivo .parquet no Google Drive
-    url = "https://drive.google.com/uc?id=1I0p5gDtBhq9LK6EZyheBlIuOIxnwU-Ns"
-    output = "applicants.parquet"
-    
-    # Faz o download do arquivo do Drive
-    gdown.download(url, output, quiet=False)
-
-    # Lê o arquivo parquet
-    df = pd.read_parquet(output)
-
-    # Aplica sua função para calcular idade, com proteção para dados ausentes
-    if "data_nascimento" in df.columns:
-        df["data_nascimento"] = df["data_nascimento"].astype(str).str.strip()
-        df["idade"] = df["data_nascimento"].apply(calcular_idade)
-    else:
-        df["idade"] = None
-
-    # Retorna somente os primeiros registros (para performance)
-    return df.head(limite)
-
-@st.cache_data
 def carregar_prospects():
     url = "https://drive.google.com/uc?id=1I7PN2XeaETuBjcED8BDbC8mYKtEFsRHM"
     output = "prospects.json"
@@ -404,7 +382,13 @@ def load_jobs_data():
 
 # ------------------- INICIALIZAÇÃO DE SESSÃO ------------------- #
 # Carregamento efetivo dos dados
-df = carregar_dados()
+# Lê os 3 arquivos separadamente
+part1 = pd.read_parquet("dados/applicants_part1.parquet")
+part2 = pd.read_parquet("dados/applicants_part2.parquet")
+part3 = pd.read_parquet("dados/applicants_part3.parquet")
+
+# Junta tudo em um único DataFrame
+df = pd.concat([part1, part2, part3], ignore_index=True)
 prospects = carregar_prospects()
 jobs_data = load_jobs_data()
 
