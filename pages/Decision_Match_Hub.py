@@ -486,6 +486,7 @@ if st.session_state.etapa == 21:
 
     idade_validas = pd.to_numeric(st.session_state.df_filtro["idade"], errors="coerce").dropna()
     if not idade_validas.empty:
+        st.markdown("entrou")
         idade_min, idade_max = int(idade_validas.min()), int(idade_validas.max())
         idade_range = st.slider(
             "Selecione a faixa de idade dos candidatos que deseja considerar:",
