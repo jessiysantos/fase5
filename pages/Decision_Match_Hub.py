@@ -125,7 +125,7 @@ def mostrar_resultado():
                 st.success("✅ Candidatos ranqueados com sucesso! Veja os 10 mais aderentes abaixo.")             
                 #st.rerun()
     if "vaga_emb" not in st.session_state:
-        st.info("ℹ️ Você optou por não ranquear os candidatos com base na vaga. Abaixo, exibimos os perfis com base apenas nos filtros aplicados.")
+        st.info("ℹ️ Para visualizar o ranking, primeiro ranqueie os candidatos com base na vaga.")
         return
     vaga_emb = st.session_state["vaga_emb"]
 
