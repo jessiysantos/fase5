@@ -547,8 +547,10 @@ prospects = carregar_prospects()
 jobs_data = load_jobs_data()
 
 #Teste Fê
-st.sidebar.write(" TESTE: Candidatos PCD na base original:", df[df["pcd"] == 1].shape[0])
-st.sidebar.write("TESTE: Candidatos PCD no filtro atual:", st.session_state.df_filtro[st.session_state.df_filtro["pcd"] == 1].shape[0])
+st.sidebar.write("✅ Total de PCDs na base original:", df[df["pcd"] == 1].shape[0])
+if "df_filtro" in st.session_state:
+    st.sidebar.write("✅ PCDs após os filtros:", st.session_state.df_filtro[st.session_state.df_filtro["pcd"] == 1].shape[0])
+
 
 total_sem_idade = df["idade"].isna().sum()
 
