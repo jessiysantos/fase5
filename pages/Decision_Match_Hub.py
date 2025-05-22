@@ -578,6 +578,8 @@ if "resumo" not in st.session_state:
     st.session_state.resumo = []
 if "idioma_escolhido" not in st.session_state:
     st.session_state.idioma_escolhido = None
+if "candidatos_selecionados" not in st.session_state:
+    st.session_state.candidatos_selecionados = set()
 
 #st.title("Triagem Inteligente de Candidatos")
 st.markdown("""
@@ -1021,9 +1023,6 @@ with st.sidebar:
     st.markdown("---")
     total = len(st.session_state.df_filtro)
     st.markdown(f"<div style='font-size: 18px;'>👥 <b>Total de candidatos:</b> <span style='color:#00AEEF; font-size: 20px'>{total}</span></div>", unsafe_allow_html=True)
-
-if "candidatos_selecionados" not in st.session_state:
-    st.session_state.candidatos_selecionados = set()
 
 with st.sidebar:
     st.markdown("### 🌟 Meus Selecionados")
