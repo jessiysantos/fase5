@@ -431,7 +431,7 @@ A IA compara esse conteúdo com a descrição da vaga e calcula uma similaridade
   #      st.write(f"📈 Nível: {candidato['nivel_profissional']}")
   #      st.write(f"📍 Local: {candidato['cidade']}, {candidato['estado']}")
 
-  #  st.text_area("📄 Currículo (preview)", value=candidato["cv_pt"][:1500], height=200, disabled=True)
+    st.text_area("📄 Currículo (preview)", value=candidato["cv_pt"][:1500], height=200, disabled=True)
 
     # ③ HISTÓRICO DE VAGAS
     st.markdown("### 📂 Histórico de Participação em Vagas")
