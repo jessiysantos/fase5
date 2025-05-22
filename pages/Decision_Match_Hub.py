@@ -27,6 +27,16 @@ def normalize_text(text):
 def traduzir_para_portugues(texto):
     return GoogleTranslator(source='auto', target='pt').translate(texto)
 
+def formatar_reais(valor):
+    try:
+        # Tenta converter para float (mesmo se estiver em formato brasileiro)
+        if pd.isna(valor) or str(valor).strip().lower() in ["nenhum", ""]:
+            return "—"
+        valor_float = float(str(valor).replace("R$", "").replace(".", "").replace(",", "."))
+        return f"R$ {valor_float:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
+    except:
+        return "—"
+
 def calcular_idade(data):
     if pd.isna(data):
         return None
@@ -253,9 +263,7 @@ A IA compara esse conteúdo com a descrição da vaga e calcula uma similaridade
     df_plot["similaridade"] = df_plot["score_similaridade"] * 100
     df_plot["candidato"] = df_plot["nome"]
 
-    # Formatar a faixa salarial com R$
-    df_plot["remuneracao_formatada"] = df_plot["remuneracao"].apply(
-        lambda x: f"R$ {str(x).replace('.', '').replace(',', '.'):,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
+    df_plot["remuneracao_formatada"] = df_plot["remuneracao"].apply(formatar_reais)
 )
     fig_scatter = px.scatter(
         df_plot,
