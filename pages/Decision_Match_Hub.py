@@ -847,6 +847,7 @@ if etapa == 0:
         st.rerun()  # <- força o Streamlit a redesenhar a interface
 
     if st.button("Ok, podemos começar!"):
+        st.session_state.df_filtro = df.copy()
         avancar(
             "Para começarmos a filtrar os melhores perfis, você gostaria de considerar apenas candidatos com deficiência (PCD)?",
             resposta="Ok, podemos começar!",
@@ -872,8 +873,9 @@ if etapa >= 1:
                 })
             
             elif resposta.lower() in ["sim"]:
-                df_filtro = st.session_state.df_filtro[df_filtro["pcd"] == 1]
-                st.session_state.df_filtro = df_filtro
+                base = df.copy()  # <- base original, não filtrada
+                base = base[base["pcd"] == 1]
+                st.session_state.df_filtro = base
                 st.session_state.resumo.append("🔹 Apenas PCD")
                 avancar("Deseja aplicar uma faixa etária?", resposta, 2)
             else:
