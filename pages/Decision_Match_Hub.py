@@ -35,7 +35,7 @@ def formatar_reais(valor):
         valor_float = float(str(valor).replace("R$", "").replace(".", "").replace(",", "."))
         return f"R$ {valor_float:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
     except:
-        return "—"
+        return valor
 
 def calcular_idade(data):
     if pd.isna(data):
