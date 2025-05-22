@@ -422,8 +422,16 @@ A IA compara esse conteúdo com a descrição da vaga e calcula uma similaridade
         )
 
         st.plotly_chart(fig_radar, use_container_width=True)
+        
+        candidato_id = f"{candidato['nome']}_{atual}"  # ou outro identificador único
+        selecionado = candidato_id in st.session_state.candidatos_selecionados
 
-    
+        if st.button("⭐ Selecionar" if not selecionado else "✅ Selecionado", key=f"selecionar_{atual}"):
+            if selecionado:
+                st.session_state.candidatos_selecionados.remove(candidato_id)
+            else:
+                st.session_state.candidatos_selecionados.add(candidato_id)
+            st.rerun() 
     
   #  if "score_similaridade" in candidato:
   #      st.markdown(f"**⭐ Similaridade com a vaga:** `{candidato['score_similaridade']:.2f}`")
@@ -1013,6 +1021,17 @@ with st.sidebar:
     st.markdown("---")
     total = len(st.session_state.df_filtro)
     st.markdown(f"<div style='font-size: 18px;'>👥 <b>Total de candidatos:</b> <span style='color:#00AEEF; font-size: 20px'>{total}</span></div>", unsafe_allow_html=True)
+
+if "candidatos_selecionados" not in st.session_state:
+    st.session_state.candidatos_selecionados = set()
+
+with st.sidebar:
+    st.markdown("### 🌟 Meus Selecionados")
+    if st.session_state.candidatos_selecionados:
+        for cid in st.session_state.candidatos_selecionados:
+            st.markdown(f"- {cid.split('_')[0]}")
+    else:
+        st.markdown("_Nenhum candidato selecionado._")
 
 st.markdown("""
 <hr style='margin-top:40px'>
