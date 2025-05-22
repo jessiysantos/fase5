@@ -274,7 +274,7 @@ A IA compara esse conteúdo com a descrição da vaga e calcula uma similaridade
         labels={
             "similaridade": "Similaridade com a Vaga (%)",
             "nivel_profissional": "Nível Profissional",
-            "candidato": "Candidato"
+            "candidato": "👤 Candidato"
         },
         hover_data=["cidade", "estado", "remuneracao_formatada"]
     )
