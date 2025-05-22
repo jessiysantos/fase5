@@ -502,7 +502,7 @@ def load_jobs_data():
 
 @st.cache_data
 def carregar_dados_parquet():
-    df = pd.read_parquet("applicants_part1.parquet")
+    df = pd.read_parquet("applicants_part2.parquet")
 
     # Converte e calcula idade
     df["data_nascimento"] = pd.to_datetime(df["data_nascimento"], errors="coerce")
