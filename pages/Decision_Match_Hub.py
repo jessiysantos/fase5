@@ -267,7 +267,7 @@ A IA compara esse conteúdo com a descrição da vaga e calcula uma similaridade
         hover_data=["cidade", "estado", "remuneracao"]
     )
 
-    fig_scatter.update_layout(yaxis=dict(autorange="reversed"))  # para ordenar do mais aderente no topo
+    fig_scatter.update_layout(yaxis=dict(autorange="reversed"),showlegend=False)  # para ordenar do mais aderente no topo
     with st.expander("🎯 Top 10 Candidatos x Similaridade com a Vaga", expanded=False):
         st.plotly_chart(fig_scatter, use_container_width=True)
         
