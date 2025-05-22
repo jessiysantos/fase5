@@ -413,21 +413,21 @@ A IA compara esse conteúdo com a descrição da vaga e calcula uma similaridade
 
     
     
-    if "score_similaridade" in candidato:
-        st.markdown(f"**⭐ Similaridade com a vaga:** `{candidato['score_similaridade']:.2f}`")
+  #  if "score_similaridade" in candidato:
+  #      st.markdown(f"**⭐ Similaridade com a vaga:** `{candidato['score_similaridade']:.2f}`")
 
-    col_a, col_b = st.columns(2)
-    with col_a:
-        st.write(f"📧 Email: {candidato['email']}")
-        st.write(f"🎯 Objetivo: {candidato['objetivo_profissional']}")
-        st.write(f"🎓 Formação: {candidato['nivel_academico']}")
-        st.write(f"💬 Inglês: {candidato['nivel_ingles']} | Espanhol: {candidato['nivel_espanhol']}")
-    with col_b:
-        st.write(f"💼 Título: {candidato['titulo_profissional']}")
-        st.write(f"📈 Nível: {candidato['nivel_profissional']}")
-        st.write(f"📍 Local: {candidato['cidade']}, {candidato['estado']}")
+  #  col_a, col_b = st.columns(2)
+  #  with col_a:
+  #      st.write(f"📧 Email: {candidato['email']}")
+  #      st.write(f"🎯 Objetivo: {candidato['objetivo_profissional']}")
+  #      st.write(f"🎓 Formação: {candidato['nivel_academico']}")
+  #   st.write(f"💬 Inglês: {candidato['nivel_ingles']} | Espanhol: {candidato['nivel_espanhol']}")
+  #  with col_b:
+  #      st.write(f"💼 Título: {candidato['titulo_profissional']}")
+  #      st.write(f"📈 Nível: {candidato['nivel_profissional']}")
+  #      st.write(f"📍 Local: {candidato['cidade']}, {candidato['estado']}")
 
-    st.text_area("📄 Currículo (preview)", value=candidato["cv_pt"][:1500], height=200, disabled=True)
+  #  st.text_area("📄 Currículo (preview)", value=candidato["cv_pt"][:1500], height=200, disabled=True)
 
     # ③ HISTÓRICO DE VAGAS
     st.markdown("### 📂 Histórico de Participação em Vagas")
