@@ -264,7 +264,7 @@ A IA compara esse conteúdo com a descrição da vaga e calcula uma similaridade
     df_plot["candidato"] = df_plot["nome"]
 
     df_plot["remuneracao_formatada"] = df_plot["remuneracao"].apply(formatar_reais)
-)
+    
     fig_scatter = px.scatter(
         df_plot,
         x="similaridade",
