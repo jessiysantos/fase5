@@ -508,17 +508,27 @@ def carregar_dados_parquet():
     df["data_nascimento"] = pd.to_datetime(df["data_nascimento"], errors="coerce")
     df["idade"] = df["data_nascimento"].apply(calcular_idade)
 
-    # Ajuste campos padrão que podem estar ausentes
-    for campo in [
+    # Se a coluna existir, trata os valores; se não existir, cria com 0
+    if "pcd" in df.columns:
+        def eh_pcd(valor):
+            if pd.isna(valor):
+                return 0
+            valor_str = str(valor).strip().lower()
+            return int(valor_str in ["sim", "s", "pcd", "1", "sim.", "deficiente", "pessoa com deficiência"])
+        df["pcd"] = df["pcd"].apply(eh_pcd)
+    else:
+        df["pcd"] = 0
+
+    # Preenche apenas os campos ausentes com "Nenhum"
+    campos_esperados = [
         "nome", "email", "cidade", "estado", "objetivo_profissional",
-        "pcd", "titulo_profissional", "area_atuacao", "conhecimentos_tecnicos",
+        "titulo_profissional", "area_atuacao", "conhecimentos_tecnicos",
         "nivel_profissional", "remuneracao", "nivel_academico", "nivel_ingles",
         "nivel_espanhol", "cv_pt"
-    ]:
+    ]
+    for campo in campos_esperados:
         if campo not in df.columns:
             df[campo] = "Nenhum"
-
-    df["pcd"] = df["pcd"].apply(lambda x: 1 if str(x).strip().lower() == "sim" else 0)
 
     return df
 
