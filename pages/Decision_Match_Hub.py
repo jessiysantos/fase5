@@ -546,6 +546,10 @@ df = carregar_dados_parquet()
 prospects = carregar_prospects()
 jobs_data = load_jobs_data()
 
+#Teste Fê
+st.sidebar.write(" TESTE: Candidatos PCD na base original:", df[df["pcd"] == 1].shape[0])
+st.sidebar.write("TESTE: Candidatos PCD no filtro atual:", st.session_state.df_filtro[st.session_state.df_filtro["pcd"] == 1].shape[0])
+
 total_sem_idade = df["idade"].isna().sum()
 
 if "mensagens" not in st.session_state:
