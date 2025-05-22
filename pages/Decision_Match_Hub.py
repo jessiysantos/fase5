@@ -268,7 +268,7 @@ A IA compara esse conteúdo com a descrição da vaga e calcula uma similaridade
             "nivel_profissional": "Nível Profissional",
             "candidato": "Candidato"
         },
-        hover_data=["cidade", "estado", "remuneracao"]
+        hover_data=["cidade", "estado", "remuneracao_formatada"]
     )
 
     fig_scatter.update_layout(yaxis=dict(autorange="reversed"),showlegend=False)  # para ordenar do mais aderente no topo
