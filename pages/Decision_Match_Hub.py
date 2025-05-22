@@ -546,13 +546,6 @@ df = carregar_dados_parquet()
 prospects = carregar_prospects()
 jobs_data = load_jobs_data()
 
-
-#TESTE FÊ
-st.write("Distribuição dos valores em 'pcd':", df["pcd"].value_counts(dropna=False))
-st.write("Quantos candidatos PCD:", (df["pcd"] == 1).sum())
-# Forçando um candidato como PCD para testar o fluxo
-df.loc[0, "pcd"] = 1
-
 total_sem_idade = df["idade"].isna().sum()
 
 if "mensagens" not in st.session_state:
